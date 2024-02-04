@@ -102,7 +102,7 @@ public class Player : MonoBehaviour
 
     private void OnFireInput(InputAction.CallbackContext context)
     {
-        animator.SetTrigger(IsFireHash);
+        //animator.SetTrigger(IsFireHash);
         Debug.Log("πﬂªÁ«‘!");
     }
 
