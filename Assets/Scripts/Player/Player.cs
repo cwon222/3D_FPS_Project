@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
     /// 애니메이터용 해시값
     /// </summary>
     readonly int IsMoveHash = Animator.StringToHash("IsMove");
-    readonly int UseHash = Animator.StringToHash("Use");
+    readonly int IsFireHash = Animator.StringToHash("IsFire");
 
     /// <summary>
     /// 점프력
@@ -76,12 +76,14 @@ public class Player : MonoBehaviour
         inputActions.Player.Move.performed += OnMoveInput;
         inputActions.Player.Move.canceled += OnMoveInput;
         inputActions.Player.Jump.performed += OnJumpInput;
-        inputActions.Player.Use.performed += OnUseInput;
+        inputActions.Player.Fire.performed += OnFireInput;
+        inputActions.Player.Fire.canceled += OnFireInput;
     }
 
     private void OnDisable()
     {
-        inputActions.Player.Use.performed -= OnUseInput;
+        inputActions.Player.Fire.canceled -= OnFireInput;
+        inputActions.Player.Fire.performed -= OnFireInput;
         inputActions.Player.Jump.performed -= OnJumpInput;
         inputActions.Player.Move.canceled -= OnMoveInput;
         inputActions.Player.Move.performed -= OnMoveInput;
@@ -98,9 +100,10 @@ public class Player : MonoBehaviour
         Jump();
     }
 
-    private void OnUseInput(InputAction.CallbackContext context)
+    private void OnFireInput(InputAction.CallbackContext context)
     {
-        animator.SetTrigger(UseHash);
+        animator.SetTrigger(IsFireHash);
+        Debug.Log("발사함!");
     }
 
     private void Update()
