@@ -36,6 +36,8 @@ public class Player : MonoBehaviour
     readonly int IsMoveHash = Animator.StringToHash("IsMove");
     readonly int IsFireHash = Animator.StringToHash("IsFire");
 
+    readonly int OnDieHash = Animator.StringToHash("Die");
+
     /// <summary>
     /// มกวมทย
     /// </summary>
