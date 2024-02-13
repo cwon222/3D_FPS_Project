@@ -106,6 +106,7 @@ public class Player : MonoBehaviour
     {
         animator.SetTrigger(IsFireHash);
         Debug.Log("πﬂªÁ«‘!");
+        
     }
 
     private void Update()
