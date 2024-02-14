@@ -160,8 +160,8 @@ public class Test_Player : MonoBehaviour
         rigid = GetComponent<Rigidbody>();  // 리지드변수 초기화
         animator = GetComponent<Animator>(); // 애니메이터 초기화
 
-        ItemUseChecker checker = GetComponentInChildren<ItemUseChecker>();  // ItemUseChecker 찾기
-        checker.onItemUse += (interacable) => interacable.Use();    // 람다식으로 intercable의 Use 실행
+        //ItemUseChecker checker = GetComponentInChildren<ItemUseChecker>();  // ItemUseChecker 찾기
+        //checker.onItemUse += (interacable) => interacable.Use();    // 람다식으로 intercable의 Use 실행
 
     }
     private void Start()
