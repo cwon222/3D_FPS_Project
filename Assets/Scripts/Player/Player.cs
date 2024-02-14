@@ -65,7 +65,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        //inputActions = new PlayerInputActions();
+        //inputAction = new PlayerInputActions();
         inputActions = new();
         rigid = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
