@@ -35,8 +35,8 @@ public class Player : MonoBehaviour
     /// </summary>
     readonly int IsMoveHash = Animator.StringToHash("IsMove");
     readonly int IsFireHash = Animator.StringToHash("IsFire");
-
-    readonly int OnDieHash = Animator.StringToHash("Die");
+    readonly int IsReloadHash = Animator.StringToHash("IsReload");
+    readonly int OnDieHash = Animator.StringToHash("IsDie");
 
     /// <summary>
     /// 점프력
@@ -63,12 +63,17 @@ public class Player : MonoBehaviour
     /// </summary>
     bool IsJumpAvailable => !isJumping && (jumpCoolRemains < 0.0f);
 
+    Transform fireTransform;
+
     private void Awake()
     {
         //inputAction = new PlayerInputActions();
         inputActions = new();
         rigid = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+
+        GameObject firePos = GameObject.Find("FirePosition");
+        fireTransform =  firePos.GetComponent<Transform>();
 
     }
 
@@ -80,10 +85,14 @@ public class Player : MonoBehaviour
         inputActions.Player.Jump.performed += OnJumpInput;
         inputActions.Player.Fire.performed += OnFireInput;
         inputActions.Player.Fire.canceled += OnFireInput;
+        inputActions.Player.Reload.performed += OnReloadInput;
+        
     }
+
 
     private void OnDisable()
     {
+        inputActions.Player.Reload.performed -= OnReloadInput;
         inputActions.Player.Fire.canceled -= OnFireInput;
         inputActions.Player.Fire.performed -= OnFireInput;
         inputActions.Player.Jump.performed -= OnJumpInput;
@@ -104,14 +113,38 @@ public class Player : MonoBehaviour
 
     private void OnFireInput(InputAction.CallbackContext context)
     {
-        animator.SetTrigger(IsFireHash);
         Debug.Log("발사함!");
+        //Fire(fireTransform);
+        BulleFire();    //
+    }
+
+    private void OnReloadInput(InputAction.CallbackContext context)
+    {
+        if(currentBullet < maxBullet && !isReload)  //
+        {
+            isReload = true;        //
+            StartCoroutine(ReloadBullet()); //
+        }
+        //Reload();
+    }
+
+    private void Reload()
+    {
+        animator.SetTrigger(IsReloadHash);
+    }
+
+    void Fire(Transform fireTransform)
+    {
+        animator.SetBool("IsFire", true);
         
+        //Factory.Instance.GetBullet(fireTransform.position, fireTransform.eulerAngles.z);   // 팩토리를 이용해 총알 생성
     }
 
     private void Update()
     {
         jumpCoolRemains -= Time.deltaTime;
+
+        currentDamp -= Time.deltaTime;  //
     }
 
     private void FixedUpdate()
@@ -178,6 +211,48 @@ public class Player : MonoBehaviour
     /// </summary>
     public void Die()
     {
+        animator.SetTrigger(OnDieHash);
         Debug.Log("죽었음");
+    }
+
+    public float maxBullet; //
+    float currentBullet;    //
+    public float fireDamp;  //
+    float currentDamp;  //
+    public float reloadTime;    //
+    bool isReload = false;  //
+    public GameObject bullet;   //
+    public Transform firePos;   //
+
+    void BulleFire()    //
+    {
+        if(currentDamp <= 0 && currentBullet > 0 && !isReload)  //
+        {
+            currentDamp = fireDamp; //
+            currentDamp--;  //
+
+            Instantiate(bullet, firePos.position, firePos.rotation);    //
+        }
+        else if(currentBullet <= 0 && !isReload)    //
+        {
+            isReload = true;//
+           StartCoroutine(ReloadBullet());  //
+        }
+    }
+    IEnumerator ReloadBullet()  //
+    {
+        animator.SetTrigger(IsReloadHash);  //
+        for(float i = reloadTime; i > 0; i -= 0.1f) //
+        {
+            yield return new WaitForSeconds(0.1f);  //
+        }
+        isReload = false;   //
+        currentBullet = maxBullet;  //
+    }
+
+    private void Start()    //
+    {
+        currentBullet = maxBullet;  //
+        currentDamp = 0;    //
     }
 }
