@@ -187,14 +187,14 @@ public class Test_Player : MonoBehaviour
         inputAction.Player.Move.performed += OnMoveInput;
         inputAction.Player.Move.canceled += OnMoveInput;
         inputAction.Player.Jump.performed += OnJumpInput;
-        inputAction.Player.Fire.performed += OnFireInput;
-        inputAction.Player.Fire.canceled += OnFireInput;
+        inputAction.Player.Aim.performed += OnFireInput;
+        inputAction.Player.Aim.canceled += OnFireInput;
     }
 
     private void OnDisable()
     {
-        inputAction.Player.Fire.canceled -= OnFireInput;
-        inputAction.Player.Fire.performed -= OnFireInput;
+        inputAction.Player.Aim.canceled -= OnFireInput;
+        inputAction.Player.Aim.performed -= OnFireInput;
         inputAction.Player.Jump.performed -= OnJumpInput;
         inputAction.Player.Move.canceled -= OnMoveInput;
         inputAction.Player.Move.performed -= OnMoveInput;

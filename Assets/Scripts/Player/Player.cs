@@ -83,8 +83,8 @@ public class Player : MonoBehaviour
         inputActions.Player.Move.performed += OnMoveInput;
         inputActions.Player.Move.canceled += OnMoveInput;
         inputActions.Player.Jump.performed += OnJumpInput;
-        inputActions.Player.Fire.performed += OnFireInput;
-        inputActions.Player.Fire.canceled += OnFireInput;
+        inputActions.Player.Aim.performed += OnFireInput;
+        inputActions.Player.Aim.canceled += OnFireInput;
         inputActions.Player.Reload.performed += OnReloadInput;
         
     }
@@ -93,8 +93,8 @@ public class Player : MonoBehaviour
     private void OnDisable()
     {
         inputActions.Player.Reload.performed -= OnReloadInput;
-        inputActions.Player.Fire.canceled -= OnFireInput;
-        inputActions.Player.Fire.performed -= OnFireInput;
+        inputActions.Player.Aim.canceled -= OnFireInput;
+        inputActions.Player.Aim.performed -= OnFireInput;
         inputActions.Player.Jump.performed -= OnJumpInput;
         inputActions.Player.Move.canceled -= OnMoveInput;
         inputActions.Player.Move.performed -= OnMoveInput;
@@ -114,7 +114,7 @@ public class Player : MonoBehaviour
     private void OnFireInput(InputAction.CallbackContext context)
     {
         Debug.Log("πﬂªÁ«‘!");
-        //Fire(fireTransform);
+        //Aim(fireTransform);
         BulleFire();    //
     }
 
