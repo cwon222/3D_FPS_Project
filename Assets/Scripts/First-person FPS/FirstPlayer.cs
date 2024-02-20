@@ -16,19 +16,19 @@ public class FirstPlayer : MonoBehaviour
     float moveDirection = 0.0f;
 
     /// <summary>
-    /// 이동 속도
+    /// 현재 이동 속도
     /// </summary>
-    public float moveSpeed = 3.0f;
+    float currentMoveSpeed = 3.0f;
 
     /// <summary>
-    /// 현재 이동속도
+    /// 걷는 속도
     /// </summary>
-    float currentSpeed = 3.0f;
+    float walkSpeed = 3.0f;
 
     /// <summary>
-    /// 최대 이동속도
+    /// 달리기 속도
     /// </summary>
-    public float maxSpeed;
+    public float runSpeed = 5.0f;
 
     /// <summary>
     /// 회전방향(1 : 우회전, -1 : 좌회전, 0 : 정지)
@@ -65,10 +65,17 @@ public class FirstPlayer : MonoBehaviour
     /// </summary>
     bool IsJumpAvailable => !isJumping && (jumpCoolRemains < 0.0f);
 
-    readonly int IsWalkHash = Animator.StringToHash("Walk Speed");
-    readonly int IsRunHash = Animator.StringToHash("Max Speed");
-    readonly int IsReloadHash = Animator.StringToHash("Reloading");
-    readonly int IsAimHash = Animator.StringToHash("Aiming");
+    readonly int IsWalkHash = Animator.StringToHash("IsWalk");
+    readonly int IsRunHash = Animator.StringToHash("IsRun");
+    readonly int IsReloadHash = Animator.StringToHash("IsReload");
+    readonly int IsAimHash = Animator.StringToHash("IsAim");
+
+    bool isAim = false;
+
+    /// <summary>
+    /// 현재 웅크리고 있는지
+    /// </summary>
+    bool isCrouching = false;
 
     private void Awake()
     {
@@ -81,8 +88,8 @@ public class FirstPlayer : MonoBehaviour
     private void OnEnable()
     {
         inputActions.Player.Enable();
-        inputActions.Player.Move.performed += OnMoveInput;
-        inputActions.Player.Move.canceled += OnMoveInput;
+        inputActions.Player.Move.performed += OnWalkStart;
+        inputActions.Player.Move.canceled += OnWalkStart;
         inputActions.Player.Jump.performed += OnJumpInput;
         inputActions.Player.Run.performed += OnRunStart;
         inputActions.Player.Run.canceled += OnRunEnd;
@@ -109,69 +116,127 @@ public class FirstPlayer : MonoBehaviour
         inputActions.Player.Run.canceled -= OnRunEnd;
         inputActions.Player.Run.performed -= OnRunStart;
         inputActions.Player.Jump.performed -= OnJumpInput;
-        inputActions.Player.Move.canceled -= OnMoveInput;
-        inputActions.Player.Move.performed -= OnMoveInput;
+        inputActions.Player.Move.canceled -= OnWalkStart;
+        inputActions.Player.Move.performed -= OnWalkStart;
         inputActions.Player.Disable();
     }
 
-    private void OnMoveInput(InputAction.CallbackContext context)
+    /// <summary>
+    /// 플레이어 이동
+    /// </summary>
+    /// <param name="context"></param>
+    private void OnWalkStart(InputAction.CallbackContext context)
     {
-        SetInput(context.ReadValue<Vector2>(), currentSpeed);
+        SetInput(context.ReadValue<Vector2>(), walkSpeed);
     }
 
+    /// <summary>
+    /// 점프
+    /// </summary>
+    /// <param name="_"></param>
     private void OnJumpInput(InputAction.CallbackContext _)
     {
         Jump();
     }
 
+    /// <summary>
+    /// 달리기 시작
+    /// </summary>
+    /// <param name="context"></param>
     private void OnRunStart(InputAction.CallbackContext context)
     {
-        moveSpeed = 5.0f; // 달리기 시작
+        animator.SetFloat(IsRunHash, runSpeed);
+        currentMoveSpeed = runSpeed; // 달리기 시작
     }
+    /// <summary>
+    /// 달리기 끝
+    /// </summary>
+    /// <param name="context"></param>
     private void OnRunEnd(InputAction.CallbackContext context)
     {
-        moveSpeed = 3.0f; // 달리기 끝
+        animator.SetFloat(IsRunHash, walkSpeed);
+        currentMoveSpeed = walkSpeed; // 달리기 끝
     }
 
+    /// <summary>
+    /// 장전 시작
+    /// </summary>
+    /// <param name="context"></param>
     private void OnReloadInput(InputAction.CallbackContext context)
     {
-        animator.SetBool(IsReloadHash, true); // 장전 z코루틴쓰기
+        animator.SetTrigger(IsReloadHash); // 장전
     }
 
+    /// <summary>
+    /// 에임 시작
+    /// </summary>
+    /// <param name="context"></param>
     private void OnAimStart(InputAction.CallbackContext context)
     {
-        animator.SetBool(IsAimHash, true);  // aim 조준 시작
+        isAim = true;
+        animator.SetBool(IsAimHash, isAim);  // aim 조준 시작
     }
 
+    /// <summary>
+    /// 에임 끝
+    /// </summary>
+    /// <param name="context"></param>
     private void OnAimEnd(InputAction.CallbackContext context)
     {
-        animator.SetBool(IsAimHash, false);  // aim 조준 끝
+        isAim = false;
+        animator.SetBool(IsAimHash, isAim);  // aim 조준 끝
     }
 
+    /// <summary>
+    /// 총쏘기 시작
+    /// </summary>
+    /// <param name="context"></param>
+    /// <exception cref="NotImplementedException"></exception>
     private void OnFireEnd(InputAction.CallbackContext context)
     {
         throw new NotImplementedException();    // 총알 발사 시작
     }
 
+    /// <summary>
+    /// 총쏘기 끝
+    /// </summary>
+    /// <param name="context"></param>
+    /// <exception cref="NotImplementedException"></exception>
     private void OnFireStart(InputAction.CallbackContext context)
     {
         throw new NotImplementedException();    // 총알 발사 중지
     }
 
+    /// <summary>
+    /// 웅크리기 끝
+    /// </summary>
+    /// <param name="context"></param>
     private void OnCrouchEnd(InputAction.CallbackContext context)
     {
-        transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(1, 0.6f, 1), Time.deltaTime * 15);    // 웅크리기 시작
+        isCrouching = true;
+        if(isCrouching)
+        {
+            transform.localScale = new Vector3(transform.localScale.x, 1f, transform.localScale.z); // 플레이어 원래 크기로 바꾸기
+        }
+        
     }
-
+    /// <summary>
+    /// 웅크리기 시작
+    /// </summary>
+    /// <param name="context"></param>
     private void OnCrouchStart(InputAction.CallbackContext context)
     {
-        transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(1, 1, 1), Time.deltaTime * 15);    // 웅크리기 끝
+        isCrouching = false;
+        if(!isCrouching)
+        {
+            transform.localScale = new Vector3(transform.localScale.x, 0.6f, transform.localScale.z); // 플레이어 Y축으로 크기 줄이기
+        }
+        
     }
 
     private void Update()
     {
-        jumpCoolRemains -= Time.deltaTime;
-        currentSpeed = moveSpeed;
+        jumpCoolRemains -= Time.deltaTime; // 점프 쿨타임 줄이기
     }
 
     private void FixedUpdate()
@@ -207,8 +272,8 @@ public class FirstPlayer : MonoBehaviour
     /// </summary>
     void Move()
     {
-        //currentSpeed = rigid.velocity.magnitude;
-        rigid.MovePosition(rigid.position + Time.fixedDeltaTime * moveSpeed * moveDirection * transform.forward);
+        //walkSpeed = rigid.velocity.magnitude;
+        rigid.MovePosition(rigid.position + Time.fixedDeltaTime * currentMoveSpeed * moveDirection * transform.forward);
     }
 
     /// <summary>
