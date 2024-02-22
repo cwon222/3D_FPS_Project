@@ -28,12 +28,12 @@ public class RotateMouse : MonoBehaviour
     /// <summary>
     /// 카메라 x축 최소 회전 범위
     /// </summary>
-    float minY = -80.0f;    
+    //float minY = -80.0f;    
 
     /// <summary>
     /// 카메라 x축 최대 회전 범위
     /// </summary>
-    float maxY = 80.0f;     
+    //float maxY = 80.0f;     
 
     /// <summary>
     /// 회전할 x축 저장할 변수
@@ -58,7 +58,7 @@ public class RotateMouse : MonoBehaviour
 
         // 카메라 x축 회전의 경우 회전 범위를 설정
         eulerAngleX = ClampAngle(eulerAngleX, minX, maxX);
-        eulerAngleY = ClampAngle(eulerAngleY, minY, maxY);
+        //eulerAngleY = ClampAngle(eulerAngleY, minY, maxY);
 
         transform.rotation = Quaternion.Euler(eulerAngleX, eulerAngleY, 0); // 회전 하기
     }

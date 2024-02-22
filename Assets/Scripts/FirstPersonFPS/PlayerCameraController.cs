@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerCameraController : MonoBehaviour
 {
     /// <summary>
     /// 마우스 이동으로 카메라 회전
