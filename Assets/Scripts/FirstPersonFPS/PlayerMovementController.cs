@@ -1,13 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
-using static UnityEditor.Timeline.TimelinePlaybackControls;
 
-public class PlayerMovementController : MonoBehaviour
+
+public class PlayerMovementController : RotateMouse
 {
     PlayerInputActions inputAction;
     Rigidbody rigid;
@@ -92,15 +90,21 @@ public class PlayerMovementController : MonoBehaviour
     /// </summary>
     public Action onDie;
 
+    
 
     /// <summary>
     /// 수명이 변경되었을 때 실핼될 델리게이트
     /// </summary>
     public Action<float> onHpChange;
-
-    float hAxis;
-    float vAxis;
-    Vector3 moveVec;
+    
+    /// <summary>
+    /// 앞뒤 방향
+    /// </summary>
+    float moveUpDown;
+    /// <summary>
+    /// 양옆 방향
+    /// </summary>
+    float moveRightLeft;
 
     private void Awake()
     {
@@ -112,15 +116,12 @@ public class PlayerMovementController : MonoBehaviour
     private void Update()
     {
         JumpCoolRemains -= Time.deltaTime;  // 점프 쿨타임 줄이기
-        
     }
 
     private void FixedUpdate()
     {
-
-        Move();
-        Rotate();
-
+        MoveUD();
+        MoveRL();
     }
 
     private void OnEnable()
@@ -139,12 +140,6 @@ public class PlayerMovementController : MonoBehaviour
         inputAction.Player.Disable();
     }
 
-    //Vector2 dir = context.ReadValue<Vector2>();
-    //hAxis = dir.x;
-    //    vAxis = dir.y;
-    //    moveVec = new Vector3(hAxis, 0, vAxis);
-    //transform.position += moveVec* moveSpeed * Time.deltaTime;
-
     /// <summary>
     /// 움직이는 함수 실행
     /// </summary>
@@ -160,23 +155,22 @@ public class PlayerMovementController : MonoBehaviour
     /// <param name="input">입력된 방향</param>
     void SetInput(Vector2 input)
     {
-        hAxis = input.x;  // x
-        vAxis = input.y;    // y
+        moveRightLeft = input.x;  // 왼오
+        moveUpDown = input.y;    // 앞뒤
     }
 
     /// <summary>
     /// 실제 이동 처리 함수(FixedUpdate에서 사용)
     /// </summary>
-    void Move()
+    void MoveUD()
     {
-        moveVec = new Vector3(hAxis, 0, vAxis);
         // 방향 움직이기
-        transform.position += moveVec * moveSpeed * Time.fixedDeltaTime;
+        rigid.MovePosition(rigid.position + Time.deltaTime * moveSpeed * moveUpDown * transform.forward);
     }
 
-    void Rotate()
+    void MoveRL()
     {
-        transform.LookAt(transform.position + moveVec);
+        rigid.MovePosition(rigid.position + Time.deltaTime * moveSpeed * moveRightLeft * transform.right);
     }
 
     /// <summary>
