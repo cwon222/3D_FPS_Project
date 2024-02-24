@@ -9,11 +9,12 @@ public class PlayerMovementController : RotateMouse
 {
     PlayerInputActionFPS inputAction;
     Rigidbody rigid;
+    Animator animator;
 
     /// <summary>
     /// 현재 이동속도
     /// </summary>
-    float currentSpeed;
+    float currentSpeed = 0.0f;
 
     /// <summary>
     /// 걷는 이동 속도
@@ -29,6 +30,10 @@ public class PlayerMovementController : RotateMouse
     /// 현재 달리는 중인지 확인하기 위한 변수 true : 달리는 중 false : 걷는중
     /// </summary>
     bool isRun = false;
+    bool isWalk = false;
+
+    readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
+
 
     /// <summary>
     /// 점프력
@@ -104,8 +109,6 @@ public class PlayerMovementController : RotateMouse
     /// </summary>
     public Action onDie;
 
-    
-
     /// <summary>
     /// 수명이 변경되었을 때 실핼될 델리게이트
     /// </summary>
@@ -124,8 +127,8 @@ public class PlayerMovementController : RotateMouse
     {
         inputAction = new();    // 인풋 액션 변수 초기화
         rigid = GetComponent<Rigidbody>();  // 리지드변수 초기화
+        animator = transform.GetChild(1).GetComponent<Animator>();
         currentSpeed = walkSpeed;
-
     }
 
     private void Update()
@@ -137,14 +140,13 @@ public class PlayerMovementController : RotateMouse
     {
         MoveUD();   // 앞뒤 움직이기
         MoveRL();   // 양옆 움직이기
-        
     }
 
     private void OnEnable()
     {
         inputAction.Player.Enable();
-        inputAction.Player.Move.performed += OnMoveInput;
-        inputAction.Player.Move.canceled += OnMoveInput;
+        inputAction.Player.Move.performed += OnMoveStart;
+        inputAction.Player.Move.canceled += OnMoveEnd;
         inputAction.Player.Jump.performed += OnJumpInput;
         inputAction.Player.Run.performed += OnRunStart;
         inputAction.Player.Run.canceled += OnRunEnd;
@@ -157,8 +159,8 @@ public class PlayerMovementController : RotateMouse
         inputAction.Player.Run.canceled -= OnRunEnd;
         inputAction.Player.Run.performed -= OnRunStart;
         inputAction.Player.Jump.performed -= OnJumpInput;
-        inputAction.Player.Move.canceled -= OnMoveInput;
-        inputAction.Player.Move.performed -= OnMoveInput;
+        inputAction.Player.Move.canceled -= OnMoveEnd;
+        inputAction.Player.Move.performed -= OnMoveStart;
         inputAction.Player.Disable();
     }
 
@@ -166,9 +168,16 @@ public class PlayerMovementController : RotateMouse
     /// 움직이는 함수 실행
     /// </summary>
     /// <param name="context"></param>
-    private void OnMoveInput(InputAction.CallbackContext context)
+    private void OnMoveStart(InputAction.CallbackContext context)
     {
         SetInput(context.ReadValue<Vector2>());  // 읽은 Vector2 값
+        animator.SetFloat(MoveSpeed, 0.5f);   // IsMove 해쉬값 넣기
+        isWalk = true;
+    }
+    private void OnMoveEnd(InputAction.CallbackContext context)
+    {
+        isWalk = false;
+        animator.SetFloat(MoveSpeed, 0);
     }
 
     /// <summary>
@@ -233,7 +242,9 @@ public class PlayerMovementController : RotateMouse
     /// <param name="context"></param>
     private void OnRunStart(InputAction.CallbackContext context)
     {
-        isRun = true;   
+        isRun = true;
+        isWalk = false;
+        animator.SetFloat(MoveSpeed, 1.0f);   // IsMove 해쉬값 넣기
     }
 
     /// <summary>
@@ -243,6 +254,14 @@ public class PlayerMovementController : RotateMouse
     private void OnRunEnd(InputAction.CallbackContext context)
     {
         isRun = false;
+        if(isWalk)
+        {
+            animator.SetFloat(MoveSpeed, 0.5f);   // IsMove 해쉬값 넣기
+        }
+        else if(!isWalk)
+        {
+            animator.SetFloat(MoveSpeed, 0.0f);
+        }
     }
 
 

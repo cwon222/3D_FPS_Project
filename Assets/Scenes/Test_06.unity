@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -796,12 +796,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1195856294}
-  - component: {fileID: 1195856297}
   - component: {fileID: 1195856300}
   - component: {fileID: 1195856301}
-  - component: {fileID: 1195856298}
-  - component: {fileID: 1195856302}
+  - component: {fileID: 1195856297}
+  - component: {fileID: 1195856304}
   - component: {fileID: 1195856303}
+  - component: {fileID: 1195856302}
+  - component: {fileID: 1195856305}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -857,23 +858,6 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &1195856298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1195856293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0d5c54a78af47741a11c177890182a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotateCamXAxisSpeed: 5
-  rotateCamYAxisSpeed: 3
-  moveSpeed: 5
-  jumpPower: 6
-  jumpCoolTime: 5
 --- !u!54 &1195856300
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -933,9 +917,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1195856293}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62bf0b165e5743049bf1013cda23e657, type: 3}
+  m_Script: {fileID: 11500000, guid: c0d5c54a78af47741a11c177890182a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotateCamXAxisSpeed: 5
+  rotateCamYAxisSpeed: 3
+  walkSpeed: 3
+  runSpeed: 5
+  jumpPower: 6
+  jumpCoolTime: 5
 --- !u!114 &1195856303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -950,6 +940,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateCamXAxisSpeed: 5
   rotateCamYAxisSpeed: 3
+--- !u!114 &1195856304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1195856293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62bf0b165e5743049bf1013cda23e657, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!95 &1195856305
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1195856293}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: cbad26d83d0147c44a128eb7e05bc247, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!224 &1355719431 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 33113470401753785, guid: b2f43b43cc7b1474691e5f41302715e3,
