@@ -7,14 +7,28 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovementController : RotateMouse
 {
-    PlayerInputActions inputAction;
+    PlayerInputActionFPS inputAction;
     Rigidbody rigid;
 
+    /// <summary>
+    /// 현재 이동속도
+    /// </summary>
+    float currentSpeed;
 
     /// <summary>
-    /// 이동 속도
+    /// 걷는 이동 속도
     /// </summary>
-    public float moveSpeed = 5.0f;
+    public float walkSpeed = 3.0f;
+
+    /// <summary>
+    /// 뛰는 이동 속도
+    /// </summary>
+    public float runSpeed = 5.0f;
+
+    /// <summary>
+    /// 현재 달리는 중인지 확인하기 위한 변수 true : 달리는 중 false : 걷는중
+    /// </summary>
+    bool isRun = false;
 
     /// <summary>
     /// 점프력
@@ -110,6 +124,7 @@ public class PlayerMovementController : RotateMouse
     {
         inputAction = new();    // 인풋 액션 변수 초기화
         rigid = GetComponent<Rigidbody>();  // 리지드변수 초기화
+        currentSpeed = walkSpeed;
 
     }
 
@@ -120,8 +135,9 @@ public class PlayerMovementController : RotateMouse
 
     private void FixedUpdate()
     {
-        MoveUD();
-        MoveRL();
+        MoveUD();   // 앞뒤 움직이기
+        MoveRL();   // 양옆 움직이기
+        
     }
 
     private void OnEnable()
@@ -130,10 +146,16 @@ public class PlayerMovementController : RotateMouse
         inputAction.Player.Move.performed += OnMoveInput;
         inputAction.Player.Move.canceled += OnMoveInput;
         inputAction.Player.Jump.performed += OnJumpInput;
+        inputAction.Player.Run.performed += OnRunStart;
+        inputAction.Player.Run.canceled += OnRunEnd;
     }
+
+
 
     private void OnDisable()
     {
+        inputAction.Player.Run.canceled -= OnRunEnd;
+        inputAction.Player.Run.performed -= OnRunStart;
         inputAction.Player.Jump.performed -= OnJumpInput;
         inputAction.Player.Move.canceled -= OnMoveInput;
         inputAction.Player.Move.performed -= OnMoveInput;
@@ -160,17 +182,26 @@ public class PlayerMovementController : RotateMouse
     }
 
     /// <summary>
-    /// 실제 이동 처리 함수(FixedUpdate에서 사용)
+    /// 실제 앞뒤로 이동 처리 함수(FixedUpdate에서 사용)
     /// </summary>
     void MoveUD()
     {
         // 방향 움직이기
-        rigid.MovePosition(rigid.position + Time.deltaTime * moveSpeed * moveUpDown * transform.forward);
+        if (isRun == true)
+            currentSpeed = runSpeed;
+        else
+            currentSpeed = walkSpeed;
+
+        rigid.MovePosition(rigid.position + Time.deltaTime * currentSpeed * moveUpDown * transform.forward);
     }
 
+    /// <summary>
+    /// 실제 양옆로 이동 처리 함수(FixedUpdate에서 사용)
+    /// </summary>
     void MoveRL()
     {
-        rigid.MovePosition(rigid.position + Time.deltaTime * moveSpeed * moveRightLeft * transform.right);
+        currentSpeed = walkSpeed;
+        rigid.MovePosition(rigid.position + Time.deltaTime * currentSpeed * moveRightLeft * transform.right);
     }
 
     /// <summary>
@@ -180,6 +211,38 @@ public class PlayerMovementController : RotateMouse
     private void OnJumpInput(InputAction.CallbackContext _)
     {
         Jump(); // 점프 처리 호출
+    }
+
+    /// <summary>
+    /// 실제 점프 처리하는 함수
+    /// </summary>
+    void Jump()
+    {
+        // ForceMode.Force : 서서히 미는 힘, ForceMode.Impulse : 한번에 미는 힘
+        if (IsJumpAvailable) // 점프가 가능할 때만 점프
+        {
+            rigid.AddForce(jumpPower * Vector3.up, ForceMode.Impulse); // 위쪽으로 jumpPower만큼 힘을 더하기 World 기준으로
+            JumpCoolRemains = jumpCoolTime; // 쿨타임 초기화
+            //GroundCount = 0; // 모든 땅에서 떨어졌음
+        }
+    }
+
+    /// <summary>
+    /// 달리기 시작
+    /// </summary>
+    /// <param name="context"></param>
+    private void OnRunStart(InputAction.CallbackContext context)
+    {
+        isRun = true;   
+    }
+
+    /// <summary>
+    ///  달리기 끝
+    /// </summary>
+    /// <param name="context"></param>
+    private void OnRunEnd(InputAction.CallbackContext context)
+    {
+        isRun = false;
     }
 
 
@@ -199,18 +262,6 @@ public class PlayerMovementController : RotateMouse
     }
 
 
-    /// <summary>
-    /// 실제 점프 처리하는 함수
-    /// </summary>
-    void Jump()
-    {
-        // ForceMode.Force : 서서히 미는 힘, ForceMode.Impulse : 한번에 미는 힘
-        if (IsJumpAvailable) // 점프가 가능할 때만 점프
-        {
-            rigid.AddForce(jumpPower * Vector3.up, ForceMode.Impulse); // 위쪽으로 jumpPower만큼 힘을 더하기 World 기준으로
-            JumpCoolRemains = jumpCoolTime; // 쿨타임 초기화
-            //GroundCount = 0; // 모든 땅에서 떨어졌음
-        }
-    }
+    
 
 }

@@ -8,11 +8,13 @@ public class RotateMouse : MonoBehaviour
     /// <summary>
     /// 카멜라 x축 회전 속도
     /// </summary>
+    [HideInInspector]
     public float rotateCamXAxisSpeed = 5.0f;
 
     /// <summary>
     /// 카메라 y축 회전 속도
     /// </summary>
+    [HideInInspector]
     public float rotateCamYAxisSpeed = 3.0f;
 
     /// <summary>
