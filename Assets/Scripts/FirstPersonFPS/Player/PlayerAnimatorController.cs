@@ -24,6 +24,14 @@ public class PlayerAnimatorController : MonoBehaviour
     }
 
     /// <summary>
+    /// 재장전 애니메이션 실행하는 함수
+    /// </summary>
+    public void OnReload()
+    {
+        animator.SetTrigger("onReload"); // 재장전 애니메이션 해쉬값 설정
+    }
+
+    /// <summary>
     /// 애니메이터를 컨트롤할 변수
     /// </summary>
     /// <param name="stateNmae"></param>
@@ -32,5 +40,15 @@ public class PlayerAnimatorController : MonoBehaviour
     public void Play(string stateNmae, int layer, float normalizedTime)
     {
         animator.Play(stateNmae, layer, normalizedTime);
+    }
+
+    /// <summary>
+    /// 애니메이션이 현재 진행 중인지 확인하고 결과를 반환하는 함수
+    /// </summary>
+    /// <param name="name">반환할 애니메이션 이름</param>
+    /// <returns></returns>
+    public bool CurrentAnimationIs(string name)
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).IsName(name);
     }
 }

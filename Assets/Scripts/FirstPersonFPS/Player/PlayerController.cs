@@ -18,6 +18,11 @@ public class PlayerController : MonoBehaviour
     KeyCode keyCodeJump = KeyCode.Space;
 
     /// <summary>
+    /// 재장전 키 설정
+    /// </summary>
+    KeyCode keyCodeReload = KeyCode.R;
+
+    /// <summary>
     /// 마우스 이동으로 카메라 회전
     /// </summary>
     RotateMouse rotateToMouse;
@@ -131,6 +136,11 @@ public class PlayerController : MonoBehaviour
         else if(Input.GetMouseButtonUp(0)) // 마우스 버튼을 떼면
         {
             weapon.StopWeaponAction();  // 공격 중지 함수 실행
+        }
+
+        if(Input.GetKeyDown(keyCodeReload)) // R키 누르면
+        {
+            weapon.StartReload();       // 재장전 함수 실행
         }
     }
 }

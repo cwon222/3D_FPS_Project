@@ -39,6 +39,11 @@ public class Weapon : MonoBehaviour
     float lastAttackTime = 0.0f;
 
     /// <summary>
+    /// 재장전 중인지 체크용 함수(ture : 재장전 중, false : 재장전 중 아님)
+    /// </summary>
+    bool isReload = false;
+
+    /// <summary>
     /// 발사 애니메이션을 제어 하기위한 변수
     /// </summary>
     PlayerAnimatorController animator;
@@ -76,6 +81,9 @@ public class Weapon : MonoBehaviour
     /// <param name="type">받은 값</param>
     public void StartWeaponAction(int type = 0)
     {
+        // 재장전 중일 떄는 무기 액션 불가능
+        if (isReload == true) return;
+
         // 마우스 왼쪽 클릭 (공격 시작)
         if (type == 0)
         {
@@ -103,6 +111,20 @@ public class Weapon : MonoBehaviour
         {
             StopCoroutine("OnAttackLoop");  // 연사 공격 코루틴 정지
         }
+    }
+
+    /// <summary>
+    /// 재장전 실행 시키는 함수
+    /// </summary>
+    public void StartReload()
+    {
+        // 현재 재장전 중이면 재장전 불가능
+        if(isReload == true) return;
+
+        // 무기 액션 동주에 R 키를 눌러 재장전을 시도하면 무기 액션 종료 후 재장전
+        StopWeaponAction();
+
+        StartCoroutine("OnReload"); // 재장전 코루틴 실행
     }
 
     /// <summary>
@@ -167,6 +189,31 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(weaponSetting.attackRate * 0.3f); // 기다리기
 
         fireEffect.SetActive(false);    // 비활성화
+    }
+
+    IEnumerator OnReload()
+    {
+        isReload = true;
+
+        animator.OnReload(); // 재장전 애니메이션 실행
+
+        while(true)
+        {
+            // 현재 애니메이션니 movement이면 재장전 애니메이션 재생이 종료된것
+            if(animator.CurrentAnimationIs("Movement"))
+            {
+                isReload = false;
+
+                // 현재 탄 수를 최대로 설정
+                weaponSetting.currentAmmo = weaponSetting.maxAmmo;
+                // 바뀐 탄 수 정보를 Text UI에 갱신
+                onAmmoEvent.Invoke(weaponSetting.currentAmmo, weaponSetting.maxAmmo);
+
+                yield break;
+            }
+
+            yield return null;
+        }
     }
 }
 
