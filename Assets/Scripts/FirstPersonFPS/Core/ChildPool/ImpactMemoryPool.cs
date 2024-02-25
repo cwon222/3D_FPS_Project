@@ -6,7 +6,7 @@ using UnityEngine;
 public enum ImpactType
 {
     Normal = 0, // 벽, 바닥
-    Obstacle = 0   // 장애물
+    Obstacle   // 장애물
 }
 
 /// <summary>

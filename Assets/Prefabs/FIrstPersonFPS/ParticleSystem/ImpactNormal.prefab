@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4624592394204646634}
   - component: {fileID: 691685946417739990}
   - component: {fileID: 3641977204225921439}
-  - component: {fileID: -7329147029156175180}
+  - component: {fileID: -6844643868872044378}
   m_Layer: 0
-  m_Name: ImpactObstacle
+  m_Name: ImpactNormal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -223,8 +223,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 0, g: 0, b: 0.36078432, a: 1}
-      maxColor: {r: 0, g: 0, b: 1, a: 1}
+      minColor: {r: 0, g: 0, b: 0, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -4876,8 +4876,8 @@ ParticleSystemRenderer:
   m_AllowRoll: 1
   m_FreeformStretching: 0
   m_RotateWithStretchDirection: 1
-  m_UseCustomVertexStreams: 0
-  m_VertexStreams: 00010304
+  m_UseCustomVertexStreams: 1
+  m_VertexStreams: 00030409
   m_UseCustomTrailVertexStreams: 0
   m_TrailVertexStreams: 00010304
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
@@ -4889,7 +4889,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &-7329147029156175180
+--- !u!114 &-6844643868872044378
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
