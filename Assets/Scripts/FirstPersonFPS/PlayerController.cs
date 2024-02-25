@@ -49,11 +49,11 @@ public class PlayerController : MonoBehaviour
         // 현재 위치에 고정
         Cursor.lockState = CursorLockMode.Locked;
 
-        rotateToMouse = GetComponent<RotateMouse>(); // RotateMouse 컴포넌트 찾기
-        movement = GetComponent<PlayerMovementController>(); // PlayerMovementController 컴포넌트 찾기
+        rotateToMouse = GetComponent<RotateMouse>();            // RotateMouse 컴포넌트 찾기
+        movement = GetComponent<PlayerMovementController>();    // PlayerMovementController 컴포넌트 찾기
         status = GetComponent<Status>();                        // Status 컴포넌트 찾기
         animator = GetComponent<PlayerAnimatorController>();    // PlayerAnimatorController 컴포넌트 찾기
-        weapon = GetComponentInChildren<Weapon>();          // 자식 오브젝트 안에 있는 Weapon 컴포넌트 찾기
+        weapon = GetComponentInChildren<Weapon>();              // 자식 오브젝트 안에 있는 Weapon 컴포넌트 찾기
     }
 
     private void Update()
@@ -124,7 +124,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void UpdateWeaponAction()
     {
-        if(Input.GetMouseButton(0)) // 마우스 버튼을 누르면
+        if(Input.GetMouseButtonDown(0)) // 마우스 버튼을 누르면
         {
             weapon.StartWeaponAction(); // 공격 시작 함수 실행
         }

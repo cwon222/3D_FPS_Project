@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,7 +36,7 @@ public class Weapon : MonoBehaviour
             // 연속 공격
             if(weaponSetting.isAutomaticAttack == true)
             {
-                StartCoroutine(OnAttackLoop()); // 연사 공격 코루틴 시작
+                StartCoroutine("OnAttackLoop"); // 연사 공격 코루틴 시작
             }
             // 단발 공격
             else
@@ -56,7 +55,7 @@ public class Weapon : MonoBehaviour
         // 마우스 왼쪽  클릭 (공격 종료)
         if(type == 0)
         {
-            StopCoroutine(OnAttackLoop());  // 연사 공격 코루틴 정지
+            StopCoroutine("OnAttackLoop");  // 연사 공격 코루틴 정지
         }
     }
 
@@ -78,13 +77,13 @@ public class Weapon : MonoBehaviour
     /// 단발 공격시 실행할 함수
     /// </summary>
     /// <exception cref="NotImplementedException"></exception>
-    private void OnAttack()
+    public void OnAttack()
     {
         // 현재 시간 - 마지막 발사 시간 > 공격 속도
         if (Time.deltaTime - lastAttackTime > weaponSetting.attackRate) 
         {
             // 뛰고 있을 때는 공격 불가능
-            if(animator.MoveSpeed > 0.5) // 뛰고 있는 애니메이션이 재생 중이면
+            if(animator.MoveSpeed > 0.5f) // 뛰고 있는 애니메이션이 재생 중이면
             {
                 return; // 뛰고 있을 때는 반환
             }
