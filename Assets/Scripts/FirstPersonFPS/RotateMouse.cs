@@ -3,18 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 마우스 이동을 관리하는 스크립트
+/// </summary>
 public class RotateMouse : MonoBehaviour
 {
     /// <summary>
     /// 카멜라 x축 회전 속도
     /// </summary>
-    [HideInInspector]
     public float rotateCamXAxisSpeed = 5.0f;
 
     /// <summary>
     /// 카메라 y축 회전 속도
     /// </summary>
-    [HideInInspector]
     public float rotateCamYAxisSpeed = 3.0f;
 
     /// <summary>
@@ -25,17 +26,7 @@ public class RotateMouse : MonoBehaviour
     /// <summary>
     /// 카메라 x축 최대 회전 범위
     /// </summary>
-    float maxX = 50.0f;
-    
-    /// <summary>
-    /// 카메라 x축 최소 회전 범위
-    /// </summary>
-    //float minY = -80.0f;    
-
-    /// <summary>
-    /// 카메라 x축 최대 회전 범위
-    /// </summary>
-    //float maxY = 80.0f;     
+    float maxX = 50.0f;   
 
     /// <summary>
     /// 회전할 x축 저장할 변수
@@ -60,7 +51,6 @@ public class RotateMouse : MonoBehaviour
 
         // 카메라 x축 회전의 경우 회전 범위를 설정
         eulerAngleX = ClampAngle(eulerAngleX, minX, maxX);
-        //eulerAngleY = ClampAngle(eulerAngleY, minY, maxY);
 
         transform.rotation = Quaternion.Euler(eulerAngleX, eulerAngleY, 0); // 회전 하기
     }
