@@ -2,8 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// UnityEvent의 클래스의 일반화 정의에 따라 호출할 수 있는 이벤트 메소드의 ㅐㅁ개변수가 결정된다
+/// </summary>
+[System.Serializable]
+public class AmmoEvent : UnityEngine.Events.UnityEvent<int, int> { }
 public class Weapon : MonoBehaviour
 {
+    /// <summary>
+    /// 탄 이벤트 변수
+    /// </summary>
+    [HideInInspector]
+    public AmmoEvent onAmmoEvent = new AmmoEvent();
+
     /// <summary>
     /// 총구에서 나오는 이펙트 변수
     /// </summary>
@@ -37,15 +48,26 @@ public class Weapon : MonoBehaviour
     /// </summary>
     CasingMemoryPool casingMemoryPool;
 
+    /// <summary>
+    /// 외부에서 필요한 정보를 보기 위한 프로퍼티
+    /// </summary>
+    public WeaponName WeaponName => weaponSetting.WeaponName;
+
     private void Awake()
     {
         animator = GetComponentInParent<PlayerAnimatorController>(); // 부모 오브젝트에 있는 플레이어 오브젝트에 있는 PlayerAnimatorController 찾기
         casingMemoryPool = GetComponent<CasingMemoryPool>();
+
+        // 처음 탄 수는 최대 탄수로 설정
+        weaponSetting.currentAmmo = weaponSetting.maxAmmo;
     }
 
     private void OnEnable()
     {
         fireEffect.SetActive(false); // 총알 발사 이펙트 비활성화
+
+        // 무기가 활성화 될 때 해당 무기의 탄 수를 갱신 한다
+        onAmmoEvent.Invoke(weaponSetting.currentAmmo, weaponSetting.maxAmmo);
     }
 
     /// <summary>
@@ -113,6 +135,16 @@ public class Weapon : MonoBehaviour
 
             // 공격주기가 되어야 공격할 수 있도록 하기 위한 현재 시간 저장할 함수
             lastAttackTime = Time.time;
+            
+            // 탄 수가 없으면 공격 못하게 설정
+            if(weaponSetting.currentAmmo <= 0)
+            {
+                return;
+            }
+            // 공격시 현재 남은 탄 수 1 감소
+            weaponSetting.currentAmmo--;
+            // 탄수 UI 갱신
+            onAmmoEvent.Invoke(weaponSetting.currentAmmo, weaponSetting.maxAmmo);
 
             // 무기 애니메이션 재생
             animator.Play("Fire", -1, 0); // 같은 애니메이션을 반복할 때 애니메이션을 끊고 처음부터 다시 재생

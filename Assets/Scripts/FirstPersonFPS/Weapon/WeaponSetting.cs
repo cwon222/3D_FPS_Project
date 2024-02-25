@@ -3,9 +3,30 @@
 /// 변수 추가, 삭제가 용이하기 때문에 사용
 /// System.Serializable 를 사용해서 직렬화를 해서 인스펙터 창에 멤버 변수들의 목록을 띄우기
 /// </summary>
+
+public enum WeaponName
+{
+    Rifle = 0   // 라이플
+}
+
 [System.Serializable]
 public struct WeaponSetting
 {
+    /// <summary>
+    /// 무기 이름
+    /// </summary>
+    public WeaponName WeaponName;
+
+    /// <summary>
+    /// 현재 탄약 수
+    /// </summary>
+    public int currentAmmo;
+
+    /// <summary>
+    /// 최대 탄약 수
+    /// </summary>
+    public int maxAmmo;
+
     /// <summary>
     /// 공격속도
     /// </summary>
