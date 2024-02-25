@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 /// <summary>
@@ -53,12 +54,9 @@ public class EnemyMeoryPool : MonoBehaviour
 
     private void Awake()
     {
-        //spawnPointMemoryPool = new MemoryPool(enemySpawnPointPrefab);
-        //enemyMemoryPool = new MemoryPool(enemyPrefab);
-        spawnPointMemoryPool = gameObject.AddComponent<MemoryPool>();
-        enemyMemoryPool = gameObject.AddComponent<MemoryPool>();
-
-        //enemyMemoryPool.Initialize(enemyPrefab);
+        spawnPointMemoryPool = new MemoryPool(enemySpawnPointPrefab);   // 경고 바꾸기 인스턴스 변수에 생성자
+        enemyMemoryPool = new MemoryPool(enemyPrefab);                  // 경고 바꾸기 인스턴스 변수에 생성자
+        //spawnPointMemoryPool = AddedComponent(enemySpawnPointPrefab) as MemoryPool;
 
 
         StartCoroutine("SpawnTile");    // 타일맵 생성하는 코루틴 시작

@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 오브젝트들을 관리할 풀 스크립트
 /// </summary>
-public class MemoryPool : MonoBehaviour
+public class MemoryPool
 {
     /// <summary>
     ///  메모리 풀로 관리되는 오브젝트
