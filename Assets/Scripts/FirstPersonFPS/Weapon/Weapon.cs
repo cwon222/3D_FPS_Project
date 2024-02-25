@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// UnityEvent의 클래스의 일반화 정의에 따라 호출할 수 있는 이벤트 메소드의 ㅐㅁ개변수가 결정된다
@@ -29,12 +30,14 @@ public class Weapon : MonoBehaviour
     [HideInInspector]
     public MagazineEvent onMagazineEvent = new MagazineEvent();
 
+    [Header("Fire Effect")]
     /// <summary>
     /// 총구에서 나오는 이펙트 변수
     /// </summary>
     [SerializeField]
     GameObject fireEffect;
 
+    [Header("Spawn Points")]
     /// <summary>
     /// 탄피 생성 위치
     /// </summary>
@@ -47,11 +50,20 @@ public class Weapon : MonoBehaviour
     [SerializeField]
     Transform bulletSpawnPoint;
 
+    [Header("Weapon Setting")]
     /// <summary>
     /// 무기 설정을 위한 변수
     /// </summary>
     [SerializeField]
     WeaponSetting weaponSetting;
+
+    [Header("Aim UI")]
+    /// <summary>
+    /// 에임 모드에 따라 Aim이미지 활성화 비활성화
+    /// </summary>
+    [SerializeField]
+    Image imageAim;
+
 
     /// <summary>
     /// 마지막 발사 시간 체크용 변수
@@ -62,6 +74,26 @@ public class Weapon : MonoBehaviour
     /// 재장전 중인지 체크용 함수(ture : 재장전 중, false : 재장전 중 아님)
     /// </summary>
     bool isReload = false;
+
+    /// <summary>
+    /// 공격 여부 체크용 변수
+    /// </summary>
+    bool isAttack = false;
+
+    /// <summary>
+    /// 모드 전환 체크용 변수
+    /// </summary>
+    bool isModeChange = false;
+
+    /// <summary>
+    /// 기본 모드에서 카메라 화각(FOV)
+    /// </summary>
+    float defaultModeFOV = 60.0f;
+
+    /// <summary>
+    /// aim모드에서의 카메라 화각(FOV)
+    /// </summary>
+    float aimModeFOV = 30.0f;
 
     /// <summary>
     /// 발사 애니메이션을 제어 하기위한 변수
@@ -119,7 +151,10 @@ public class Weapon : MonoBehaviour
         onMagazineEvent.Invoke(weaponSetting.currentMagazine);
         // 무기가 활성화 될 때 해당 무기의 탄 수를 갱신 한다
         onAmmoEvent.Invoke(weaponSetting.currentAmmo, weaponSetting.maxAmmo);
+
+        ResetVariables();
     }
+
 
     /// <summary>
     /// 공격시 실행할 함수
@@ -130,12 +165,16 @@ public class Weapon : MonoBehaviour
         // 재장전 중일 떄는 무기 액션 불가능
         if (isReload == true) return;
 
+        // 모드 전환 중이면 무기 액션 불가능
+        if(isModeChange == true) return;
+
         // 마우스 왼쪽 클릭 (공격 시작)
         if (type == 0)
         {
             // 연속 공격
             if(weaponSetting.isAutomaticAttack == true)
             {
+                isAttack = true; // 연속 공격 중 설정
                 StartCoroutine("OnAttackLoop"); // 연사 공격 코루틴 시작
             }
             // 단발 공격
@@ -143,6 +182,14 @@ public class Weapon : MonoBehaviour
             {
                 OnAttack(); // 단발 공격 함수 호출
             }
+        }
+        // 마우스 오른쪽 클릭 (모드 전환)
+        else
+        {
+            // 공격 중일 떄는 모드 전환 불가능
+            if (isAttack == true) return;
+
+            StartCoroutine("OnModeChage"); // 에임 모드 전환 코루틴 실행
         }
     }
 
@@ -155,6 +202,7 @@ public class Weapon : MonoBehaviour
         // 마우스 왼쪽  클릭 (공격 종료)
         if(type == 0)
         {
+            isAttack = false;   // 공격 중 아님 설정
             StopCoroutine("OnAttackLoop");  // 연사 공격 코루틴 정지
         }
     }
@@ -215,12 +263,19 @@ public class Weapon : MonoBehaviour
             onAmmoEvent.Invoke(weaponSetting.currentAmmo, weaponSetting.maxAmmo);
 
             // 무기 애니메이션 재생
-            animator.Play("Fire", -1, 0); // 같은 애니메이션을 반복할 때 애니메이션을 끊고 처음부터 다시 재생
+            //animator.Play("Fire", -1, 0); // 같은 애니메이션을 반복할 때 애니메이션을 끊고 처음부터 다시 재생
             //animator.Play("Fire"); // 같은 애니메이션을 반복할 때 중간에 끊지 못하고 재생 완료 후 다시 재생
+
+            // 무기 애니메이션 재생 (모드에 따라 AimFire 또는 Fire 애니메이션 재생)
+            string animation = animator.AimModeIs == true ? "AimFire" : "Fire";
+            animator.Play(animation, -1, 0);
+
+            // 총구 이펙트는 default 모드일 때만 재생
+            if (animator.AimModeIs == false) StartCoroutine("FireEffect");
 
             StartCoroutine("FireEffect"); // 총알 발사시 이펙트 코루틴 시작
 
-            casingMemoryPool.SpawnCasing(casingSpawnPoint.position, transform.right);
+            casingMemoryPool.SpawnCasing(casingSpawnPoint.position, transform.right); // 탄피 생성
 
             // 광선을 발사해 원하는 위치 공격과 임펙트 효과 함수 실행
             TwoStepRaycast();
@@ -310,6 +365,48 @@ public class Weapon : MonoBehaviour
         }
         // 총구 앞 Raycast 선 그리기(확인용)
         Debug.DrawRay(bulletSpawnPoint.position, attackDirection * weaponSetting.attackDistance, Color.blue);
+    }
+
+    /// <summary>
+    /// 에임 모드 변환하는 코루틴
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator OnModeChage()
+    {
+        float current = 0;
+        float percent = 0;
+        float time = 0.35f;
+
+        animator.AimModeIs = !animator.AimModeIs; // 에임 모드 파라미터가 참이면 거짓, 거짓이면 참
+        imageAim.enabled = !imageAim.enabled;       // 에임 이미지가 보이면 보이지 않게, 보이지 않으면 보이게 설정
+
+        float start = mainCamera.fieldOfView;   // 현재 카메라의 FOV
+        float end = animator.AimModeIs == true ? aimModeFOV : defaultModeFOV; // 에임모드 파라미터에 따라 에임FOV 아니면 e디폴트FOV로 설정
+
+        isModeChange = true; // 모드 변경 중
+
+        while(percent < 1)
+        {
+            current += Time.deltaTime; // 시간 설정
+            percent = current / time;
+
+            // a모드에 따라 카메라의 시야각을 변경
+            mainCamera.fieldOfView = Mathf.Lerp(start, end, percent);
+
+            yield return null;
+        }
+
+        isModeChange = false;   // 모드 변경 중 아님
+    }
+
+    /// <summary>
+    /// 장전, 공격, 모드 초기화
+    /// </summary>
+    private void ResetVariables()
+    {
+        isReload = false;
+        isAttack = false;
+        isModeChange = false;
     }
 }
 

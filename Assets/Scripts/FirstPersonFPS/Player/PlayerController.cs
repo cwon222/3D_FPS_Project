@@ -138,6 +138,15 @@ public class PlayerController : MonoBehaviour
             weapon.StopWeaponAction();  // 공격 중지 함수 실행
         }
 
+        if(Input.GetMouseButtonDown(1)) // 마우스 오른쪽 버튼 누르면 
+        {
+            weapon.StartWeaponAction(1);    // 에임 모드 시작
+        }
+        else if( Input.GetMouseButtonUp(1)) // 마우스 오른쪽 버튼 뗴면
+        {
+            weapon.StopWeaponAction(1);     // 에임 모드 중지
+        }
+
         if(Input.GetKeyDown(keyCodeReload)) // R키 누르면
         {
             weapon.StartReload();       // 재장전 함수 실행

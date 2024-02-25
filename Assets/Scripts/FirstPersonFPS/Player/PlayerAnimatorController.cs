@@ -32,6 +32,15 @@ public class PlayerAnimatorController : MonoBehaviour
     }
 
     /// <summary>
+    /// 에임(줌) 하면 애니메이터 해쉬값 변경용 프로퍼티
+    /// </summary>
+    public bool AimModeIs
+    {
+        set => animator.SetBool("isAimMode", value);
+        get => animator.GetBool("isAimMode");
+    }
+
+    /// <summary>
     /// 애니메이터를 컨트롤할 변수
     /// </summary>
     /// <param name="stateNmae"></param>
