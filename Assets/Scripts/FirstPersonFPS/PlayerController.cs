@@ -35,7 +35,12 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 플레이어 에니메이션 제어 하기 위해 찾을 컴포넌트 변수
     /// </summary>
-    PlayerAnimatorController animator;  
+    PlayerAnimatorController animator;
+
+    /// <summary>
+    /// 무기를 사용해서 공격을 제어하기 위해 컴포넌트를 찾기 위한 변수
+    /// </summary>
+    Weapon weapon;
 
     private void Awake()
     {
@@ -48,13 +53,15 @@ public class PlayerController : MonoBehaviour
         movement = GetComponent<PlayerMovementController>(); // PlayerMovementController 컴포넌트 찾기
         status = GetComponent<Status>();                        // Status 컴포넌트 찾기
         animator = GetComponent<PlayerAnimatorController>();    // PlayerAnimatorController 컴포넌트 찾기
+        weapon = GetComponentInChildren<Weapon>();          // 자식 오브젝트 안에 있는 Weapon 컴포넌트 찾기
     }
 
     private void Update()
     {
-        UpdateRotate(); // 마우스 이동
-        UpdateMove();   // 플레이어 이동 실행
-        UpdateJump();   // 점프 실행
+        UpdateRotate();         // 마우스 이동
+        UpdateMove();           // 플레이어 이동 실행
+        UpdateJump();           // 점프 실행
+        UpdateWeaponAction(); ; // 공격 실행
     }
 
 
@@ -109,6 +116,21 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKey(keyCodeJump)) // 스페이스 바 누르면
         {
             movement.jump(); // 점프 실행
+        }
+    }
+
+    /// <summary>
+    /// 플레이어가 실제 공격을 실행 시키는 함수
+    /// </summary>
+    void UpdateWeaponAction()
+    {
+        if(Input.GetMouseButton(0)) // 마우스 버튼을 누르면
+        {
+            weapon.StartWeaponAction(); // 공격 시작 함수 실행
+        }
+        else if(Input.GetMouseButtonUp(0)) // 마우스 버튼을 떼면
+        {
+            weapon.StopWeaponAction();  // 공격 중지 함수 실행
         }
     }
 }

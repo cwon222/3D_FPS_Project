@@ -93,7 +93,8 @@ public class Weapon : MonoBehaviour
             lastAttackTime = Time.time;
 
             // 무기 애니메이션 재생
-            animator.Play("Fire", -1, 0);
+            animator.Play("Fire", -1, 0); // 같은 애니메이션을 반복할 때 애니메이션을 끊고 처음부터 다시 재생
+            //animator.Play("Fire"); // 같은 애니메이션을 반복할 때 중간에 끊지 못하고 재생 완료 후 다시 재생
         }
     }
 }
