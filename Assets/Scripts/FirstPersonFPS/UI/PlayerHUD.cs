@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,12 +7,14 @@ using UnityEngine.UI;
 
 public class PlayerHUD : MonoBehaviour
 {
+    [Header("Components")]
     /// <summary>
     /// 현재 정보가 출력되는 무기
     /// </summary>
     [SerializeField]
     Weapon weapon;
 
+    [Header("Weapon Base")]
     /// <summary>
     /// 무기 이름
     /// </summary>
@@ -29,19 +32,40 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField]
     Sprite[] spriteWeaponIcons;
 
+    [Header("Ammo")]
     /// <summary>
     /// 현재 / 최대 탄 수 출력용 Text
     /// </summary>
     [SerializeField]
     TextMeshProUGUI textAmmo;
 
+    [Header("Magazine")]
+    /// <summary>
+    /// 탄창 UI 프리펩
+    /// </summary>
+    [SerializeField]
+    GameObject magazineUIPrefab;
+
+    /// <summary>
+    /// 탄창 UI가 배치되는 판넬
+    /// </summary>
+    [SerializeField]
+    Transform magazineParent;
+
+    /// <summary>
+    /// 탄장 UI 리스트
+    /// </summary>
+    List<GameObject> magazineList;
+
     private void Awake()
     {
         SetupWeapon();  // 현재 무기 정보 갱신 함수 호출
+        SetupMagazine();    // 현재 탄창 정보를 갱신 함수 호출
 
         // 메소드가 등록되어 있는 이벤트 클래스(weapon들)의
         // Invoke() 메소드가 호출될 때 등록된 메소드(매개변수)가 실행된다
         weapon.onAmmoEvent.AddListener(UpdateAmmoHUD);
+        weapon.onMagazineEvent.AddListener(UpdateMagazineHUD);
         // Weapon::OnEnable() : 무기 오브젝트가 활성화 될 때
         // Weapon::OnAttack() : 공격으로 탄이 소모되었을 떄 
         //UpdateAmmoHUD() 호출한다
@@ -64,5 +88,39 @@ public class PlayerHUD : MonoBehaviour
     void UpdateAmmoHUD(int currentAmmo, int maxAmmo)
     {
         textAmmo.text = $"<size=40>{currentAmmo}/</size>{maxAmmo}"; // 텍스트 갱신
+    }
+
+    private void SetupMagazine()
+    {
+        // weapon에 등록되어있는 최대 탄창 개수만큼 Image Icon을 생성
+        magazineList = new List<GameObject>();
+        for(int i = 0; i <weapon.MaxMagazine; ++i)
+        {
+            GameObject clone = Instantiate(magazineUIPrefab); 
+            clone.transform.SetParent(magazineParent); // magazineParent 오브젝트의 자식으로 등록
+            clone.SetActive(false); // 후 모두 비활성화
+
+            magazineList.Add(clone);// 모두 리스트에 저장
+        }
+
+        // weapon에 등록되어 있는 현재 탄창 개수 만큼 오브젝트 활성화
+        for(int i = 0; i < weapon.CurrentMagazine; ++i)
+        {
+            magazineList[i].SetActive(true);
+        }
+    }
+
+    private void UpdateMagazineHUD(int currentMagazine)
+    {
+        // 전부 비활성화
+        for(int i = 0; i < magazineList.Count; ++i)
+        {
+            magazineList[i].SetActive(false);
+        }
+        // currentMagazine 개수 만큼 활성화
+        for(int i = 0; i < currentMagazine; ++i)
+        {
+            magazineList[i].SetActive(true);
+        }
     }
 }

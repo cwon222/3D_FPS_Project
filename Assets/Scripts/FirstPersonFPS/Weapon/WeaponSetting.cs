@@ -18,6 +18,16 @@ public struct WeaponSetting
     public WeaponName WeaponName;
 
     /// <summary>
+    /// 현재 탄창 수
+    /// </summary>
+    public int currentMagazine;
+
+    /// <summary>
+    /// 최대 탄창 수
+    /// </summary>
+    public int maxMagazine;
+
+    /// <summary>
     /// 현재 탄약 수
     /// </summary>
     public int currentAmmo;
