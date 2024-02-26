@@ -48,6 +48,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65affbdbe32baf148bb2ba96e30f983f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetRecognition: 8
+  trackingRange: 10
+  projectilePrefab: {fileID: 9159371997441132544, guid: 747c34c4a4463c7418100d79970c7760,
+    type: 3}
+  projectileSpawnPoint: {fileID: 9066919437077573826}
+  attackRange: 5
+  attackRate: 1
 --- !u!114 &-7115015501136413811
 MonoBehaviour:
   m_ObjectHideFlags: 0

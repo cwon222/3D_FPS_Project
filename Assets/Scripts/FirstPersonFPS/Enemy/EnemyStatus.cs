@@ -8,20 +8,64 @@ using UnityEngine.AI;
 /// </summary>
 public enum EnemyState
 {
-    None = -1,
-    Idle = 0,
-    Wander,
+    None = -1,      // 적 없음
+    Idle = 0,       // 적 대기
+    Wander,         // 적 배회
+    Pursuit,        // 적 추적
+    Attack          // 적 공격
 }
 
 /// <summary>
 /// 적의 행동을 제어하는 스크립트
 /// </summary>
-public class EnemyMove : MonoBehaviour
+public class EnemyStatus : MonoBehaviour
 {
+    [Header("Pursuit")]
+    /// <summary>
+    /// 인식 범위 (범위 안으로 들어오면 추적 상태로 변경)
+    /// </summary>
+    [SerializeField]
+    float targetRecognition = 8;
+
+    /// <summary>
+    /// 추적 범위 (범위 밖으로 나가면 배회 상태로 변경)
+    /// </summary>
+    [SerializeField]
+    float trackingRange = 10;
+
+    [Header("Attack")]
+    /// <summary>
+    /// 발사체 오브젝트를 담을 곳
+    /// </summary>
+    public GameObject projectilePrefab;
+
+    /// <summary>
+    /// 발사체의 생성 위치
+    /// </summary>
+    //[SerializeField]
+    public Transform projectileSpawnPoint;
+
+    /// <summary>
+    /// 공격 범위(범위 안에 들어오면 공격 상태로 변경)
+    /// </summary>
+    [SerializeField]
+    float attackRange = 5.0f;
+
+    /// <summary>
+    /// 공격 속도
+    /// </summary>
+    [SerializeField]
+    float attackRate = 1.0f;
+
     /// <summary>
     ///  현재 적의 행동
     /// </summary>
     EnemyState enemyState = EnemyState.None;
+    
+    /// <summary>
+    /// 공격 주기 계산용 변수(마지막 발사 시간 저장)
+    /// </summary>
+    float lastAttackTime = 0.0f;
 
     /// <summary>
     /// 상태 정보
@@ -33,10 +77,17 @@ public class EnemyMove : MonoBehaviour
     /// </summary>
     NavMeshAgent navMeshAgent;
 
-    private void Awake()
+    /// <summary>
+    /// 추적할 대상
+    /// </summary>
+    Transform target;
+
+    //private void Awake()
+    public void Setup(Transform target)
     {
         status = GetComponent<Status>();
         navMeshAgent = GetComponent<NavMeshAgent>();
+        this.target = target; // 타겟 저장
 
         // NavMeshAgent 컴포넌트에서 회전을 업데이트 못하게 설정
         navMeshAgent.updateRotation = false;
@@ -88,6 +139,9 @@ public class EnemyMove : MonoBehaviour
         while(true)
         {
             // 대기 상태일 때 하는 행동
+            // 타겟과의 거리에 따라 행동 선택(배회, 추격, 원거리 공격)
+            SelecteState();
+
             yield return null;
         }
     }
@@ -136,11 +190,15 @@ public class EnemyMove : MonoBehaviour
 
             to = new Vector3(navMeshAgent.destination.x, 0, navMeshAgent.destination.z);    // 목표 위치
             from = new Vector3(transform.position.x, 0, transform.position.z);              // 현재 위치
+
             if((to - from).sqrMagnitude < 0.01f || currentTime >= maxTime)
             {
                 // 목표 위치에 근접하거나 최대 시간까지 배회 중이면 
-                ChangeState(EnemyState.Idle);   // 대기 상태로 변경
+                ChangeState(EnemyState.Idle);   // 대기 상태로 변경 
             }
+
+            // 타겟과의 거리에 따라 행동 선택(배회, 추격, 원거리 공격)
+            SelecteState();
 
             yield return null;
         }
@@ -151,7 +209,7 @@ public class EnemyMove : MonoBehaviour
         float wanderRadius = 10;    // 현재  위치를 원점으로 하는 원의 반지름 변수
         int wanderAngle = 0;        // 선택된 각도
         int WanderAngleMin = 0;     // 최소 각도
-        int WanderAngleMax = 0;     // 최대 각도
+        int WanderAngleMax = 360;     // 최대 각도
 
         // 현재 적 캐릭터가 있는 월드 중심의 위치
         Vector3 rangePosition = Vector3.zero;
@@ -164,10 +222,13 @@ public class EnemyMove : MonoBehaviour
         Vector3 targetPosition = transform.position + SetAngle(wanderRadius, wanderAngle);
 
         // 생성된 목표위치가 자신의 이동구역을 벗어나지 않게 설정
+        // x좌표
         targetPosition.x = Mathf.Clamp(targetPosition.x,
             rangePosition.x - rangeScale.x * 0.5f,
             rangePosition.x + rangeScale.x * 0.5f);
+        // y좌표
         targetPosition.y = 0.0f;
+        // z 좌표
         targetPosition.z = Mathf.Clamp(targetPosition.x,
             rangePosition.z - rangeScale.z * 0.5f,
             rangePosition.z + rangeScale.z * 0.5f);
@@ -191,10 +252,119 @@ public class EnemyMove : MonoBehaviour
         return position;
     }
 
+    /// <summary>
+    /// 타겟을 추적하는 코루틴
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator Pursuit()
+    {
+        while (true)
+        {
+            // 배회할 때는 걷는 속도, 추적할 때는 뛰는 이동 속도
+            navMeshAgent.speed = status.RunSpeed;
+
+            // 목표위치를 현재 플레이어 위치로 설정
+            navMeshAgent.SetDestination(target.position);
+
+            // 타겟 방향을 계속 보게 만들기
+            LookRotateTarget();
+
+            // 타겟과의 거리에 따라 행동 선택(배회, 추격, 원거리 공격)
+            SelecteState();
+
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// 공격을 실행하는 코루틴
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator Attack()
+    {
+        // 공격할 때는 이동을 멈추도록 설정
+        navMeshAgent.ResetPath();
+
+        while (true)
+        {
+            // 공격할 때는 타겟을 바라보기
+            LookRotateTarget();
+
+            // 타겟과의 거리에 따라 행동 변경(배회, 추격, 공격)
+            SelecteState();
+
+            if(Time.time - lastAttackTime > attackRate) // 공격 주기가 지나면
+            {
+                // 현재 시간 저장
+                lastAttackTime = Time.time;
+
+                // 발사체 생성 (projectilePrefab 오브젝트를 projectileSpawnPoint의 위치와 각도로 생성)
+                GameObject clone = Instantiate(projectilePrefab, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
+                // clone 에는 EnemyProjectile 컴포넌트에 Setup에 타겟위치 추가
+                clone.GetComponent<EnemyProjectile>().Setup(target.position);
+            }
+
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// 타겟을 계속 보게 만드는 함수
+    /// </summary>
+    private void LookRotateTarget()
+    {
+        // 목표 위치 설정
+        Vector3 to = new Vector3(target.position.x, 0, target.position.z);
+        // 내 현재 위치
+        Vector3 from = new Vector3(transform.position.x, 0, transform.position.z);
+
+        // 바로 돌기
+        transform.rotation = Quaternion.LookRotation(to - from);
+        // 천천히 돌기
+        //Quaternion rotation = Quaternion.LookRotation(to - from);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 0.01f);
+    }
+
+    /// <summary>
+    /// 타겟과의 거리에 따라 행동을 하는 함수(배회, 추격, 원거리 공격)
+    /// </summary>
+    private void SelecteState()
+    {
+        if(target == null) return;  // 타겟이 없으면 리턴
+
+        // 타겟과 적의 거리 계산
+        float distance = Vector3.Distance(target.position, transform.position);
+
+        if(distance <= attackRange) // 타겟과 거리가 공격 범위보다 작으면
+        {
+            ChangeState(EnemyState.Attack); // 공격 상태로 변경
+        }
+        if(distance <= targetRecognition) // 타겟과 거리가 인식 범위 보다 작으면
+        {
+            ChangeState(EnemyState.Pursuit);    // 추적 상태로 변경
+        }
+        else if(distance >= trackingRange)  // 타겟과 거리가 추적 범위 보다 크면
+        {
+            ChangeState(EnemyState.Wander);     // 배회 상태로 변경
+        }
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.black;
         // 배회 상태 일때 이동할 경로 표시
         Gizmos.DrawRay(transform.position, navMeshAgent.destination - transform.position);
+
+        Gizmos.color = Color.red;
+        // 목표 인식 범위 표시
+        Gizmos.DrawWireSphere(transform.position, targetRecognition);
+
+        Gizmos.color = Color.green;
+        // 추적 범위
+        Gizmos.DrawWireSphere(transform.position, trackingRange);
+
+        Gizmos.color = new Color(0.39f, 0.04f, 0.04f);
+        // 공격 가능 범위
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }

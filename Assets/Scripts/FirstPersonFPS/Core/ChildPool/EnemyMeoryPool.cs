@@ -8,6 +8,12 @@ using UnityEngine;
 /// </summary>
 public class EnemyMeoryPool : MonoBehaviour
 {
+
+    /// <summary>
+    /// 타겟 (목표) 위치
+    /// </summary>
+    [SerializeField]
+    Transform target;
     /// <summary>
     /// 적이 등장라기 전 적의 등장 위치를 알려주는 프리팹 넣기
     /// </summary>
@@ -107,6 +113,9 @@ public class EnemyMeoryPool : MonoBehaviour
         GameObject item = enemyMemoryPool.ActivePoolItem();
         // 적의 위치를 point의 위치로 설정
         item.transform.position = point.transform.position;
+
+        // 적 이동 스크립트를 찾아 Setup 메소드의 매개변수에 target 전달
+        item.GetComponent<EnemyStatus>().Setup(target);
 
         // 적 생성전에 생기는 타일 오브젝트 비활성화
         spawnPointMemoryPool.DeactivatePoolItem(point);
