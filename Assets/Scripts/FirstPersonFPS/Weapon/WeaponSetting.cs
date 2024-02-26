@@ -18,6 +18,11 @@ public struct WeaponSetting
     public WeaponName WeaponName;
 
     /// <summary>
+    /// 무기 공격력
+    /// </summary>
+    public int damage;
+
+    /// <summary>
     /// 현재 탄창 수
     /// </summary>
     public int currentMagazine;
