@@ -56,6 +56,8 @@ public class EnemyMeoryPool : MonoBehaviour
     /// <summary>
     /// ∏ ¿« ≈©±‚
     /// </summary>
+    [Header("MapScale, EnemySpawnRange")]
+    [SerializeField]
     Vector2Int mapSize = new Vector2Int(100, 100);
 
     private void Awake()
