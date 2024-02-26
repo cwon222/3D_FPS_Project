@@ -37,13 +37,14 @@ public class EnemyStatus : MonoBehaviour
     /// <summary>
     /// 발사체 오브젝트를 담을 곳
     /// </summary>
-    public GameObject projectilePrefab;
+    [SerializeField]
+    GameObject projectilePrefab;
 
     /// <summary>
     /// 발사체의 생성 위치
     /// </summary>
-    //[SerializeField]
-    public Transform projectileSpawnPoint;
+    [SerializeField]
+    Transform projectileSpawnPoint;
 
     /// <summary>
     /// 공격 범위(범위 안에 들어오면 공격 상태로 변경)
@@ -55,7 +56,7 @@ public class EnemyStatus : MonoBehaviour
     /// 공격 속도
     /// </summary>
     [SerializeField]
-    float attackRate = 1.0f;
+    float attackRate = 2.0f;
 
     /// <summary>
     ///  현재 적의 행동
@@ -339,7 +340,7 @@ public class EnemyStatus : MonoBehaviour
         {
             ChangeState(EnemyState.Attack); // 공격 상태로 변경
         }
-        if(distance <= targetRecognition) // 타겟과 거리가 인식 범위 보다 작으면
+        else if(distance <= targetRecognition) // 타겟과 거리가 인식 범위 보다 작으면
         {
             ChangeState(EnemyState.Pursuit);    // 추적 상태로 변경
         }
