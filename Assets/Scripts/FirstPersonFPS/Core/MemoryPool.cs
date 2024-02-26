@@ -59,6 +59,11 @@ public class MemoryPool
     public int ActiveCount => activeCount;
 
     /// <summary>
+    /// 오브젝트가 임시로 보관되는 위치
+    /// </summary>
+    Vector3 tmepPosition = new Vector3(48, 1, 48);
+
+    /// <summary>
     /// 변수들 초기화 작업
     /// </summary>
     /// <param name="poolObject"></param>
@@ -86,6 +91,7 @@ public class MemoryPool
 
             poolItem.isActive = false;  // 오브젝트 비활성화하게 만드느 ㄴ변수 설정
             poolItem.gameObject = GameObject.Instantiate(poolObject); // 오브젝트 생성
+            poolItem.gameObject.transform.position = tmepPosition; // 오브젝트 위치 변경(임시로 보관될 위치)
             poolItem.gameObject.SetActive(false); // 오브젝트 안보이게 하기
 
             poolItemList.Add(poolItem); // 리스트 배열에 추가
@@ -159,6 +165,7 @@ public class MemoryPool
             {
                 activeCount--; // 카운트 줄이기
 
+                poolItem.gameObject.transform.position = tmepPosition; // 오브젝트 비활성화할 때 위치 변경(임시로 보관될 위치)
                 poolItem.isActive = false;  
                 poolItem.gameObject.SetActive (false); // 비활성화
 
@@ -181,6 +188,7 @@ public class MemoryPool
 
             if (poolItem.gameObject != null && poolItem.isActive == true) // 관리할 오브젝트가 있고 활성화 상태이면
             {
+                poolItem.gameObject.transform.position = tmepPosition; // 오브젝트 비활성화할 때 위치 변경(임시로 보관될 위치)
                 poolItem.isActive = false;      
                 poolItem.gameObject.SetActive (false);  // 비활성화
             }
