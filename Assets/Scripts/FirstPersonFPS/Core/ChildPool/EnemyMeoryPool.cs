@@ -104,6 +104,11 @@ public class EnemyMeoryPool : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 적 스폰하는 코루틴
+    /// </summary>
+    /// <param name="point">스폰할 위치</param>
+    /// <returns></returns>
     IEnumerator SpawnEnemy(GameObject point)
     {
         // 적 생성 전에 나타나는 기둥 타일 생성 시간이 지나고 나서
@@ -115,9 +120,18 @@ public class EnemyMeoryPool : MonoBehaviour
         item.transform.position = point.transform.position;
 
         // 적 이동 스크립트를 찾아 Setup 메소드의 매개변수에 target 전달
-        item.GetComponent<EnemyStatus>().Setup(target);
+        item.GetComponent<EnemyStatus>().Setup(target, this);
 
         // 적 생성전에 생기는 타일 오브젝트 비활성화
         spawnPointMemoryPool.DeactivatePoolItem(point);
+    }
+
+    /// <summary>
+    /// 적 비활성화하는 함수
+    /// </summary>
+    /// <param name="enemy">비활성화할 적</param>
+    public void DeactivateEnemy(GameObject enemy)
+    {
+        enemyMemoryPool.DeactivatePoolItem(enemy); // 비활성화
     }
 }

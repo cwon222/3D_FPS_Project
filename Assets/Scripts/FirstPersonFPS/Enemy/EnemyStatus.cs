@@ -83,12 +83,18 @@ public class EnemyStatus : MonoBehaviour
     /// </summary>
     Transform target;
 
+    /// <summary>
+    /// 적 메모리 풀(적 오브젝트 비활성화)
+    /// </summary>
+    EnemyMeoryPool enemyMeoryPool;
+
     //private void Awake()
-    public void Setup(Transform target)
+    public void Setup(Transform target, EnemyMeoryPool enemyMeoryPool)
     {
         status = GetComponent<Status>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         this.target = target; // 타겟 저장
+        this.enemyMeoryPool = enemyMeoryPool; // 적 저장
 
         // NavMeshAgent 컴포넌트에서 회전을 업데이트 못하게 설정
         navMeshAgent.updateRotation = false;
@@ -347,6 +353,21 @@ public class EnemyStatus : MonoBehaviour
         else if(distance >= trackingRange)  // 타겟과 거리가 추적 범위 보다 크면
         {
             ChangeState(EnemyState.Wander);     // 배회 상태로 변경
+        }
+    }
+
+    /// <summary>
+    /// 적이 공격 받으면 실행할 함수
+    /// </summary>
+    /// <param name="damage">받은 데미지</param>
+    public void TakeDamage(int damage)
+    {
+        // 적이 죽었는지 확인용 변수
+        bool isDie = status.DecreaseHP(damage);
+
+        if(isDie == true) // 적이 죽으면
+        {
+            enemyMeoryPool.DeactivateEnemy(gameObject); // 오브젝트 비활성화
         }
     }
 

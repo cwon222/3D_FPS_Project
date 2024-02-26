@@ -6,7 +6,8 @@ using UnityEngine;
 public enum ImpactType
 {
     Normal = 0, // 벽, 바닥
-    Obstacle   // 장애물
+    Obstacle,   // 장애물
+    Enemy       // 적
 }
 
 /// <summary>
@@ -45,6 +46,10 @@ public class ImpactMemoryPool : MonoBehaviour
         else if (hit.transform.CompareTag("ImpactObstacle")) // 장애물에 닿으면
         {
             OnSpawnImpact(ImpactType.Obstacle, hit.point, Quaternion.LookRotation(hit.normal)); // 피격 이펙트 생성
+        }
+        else if(hit.transform.CompareTag("ImpactEnemy")) // 적에게 닿으면
+        {
+            OnSpawnImpact(ImpactType.Enemy, hit.point, Quaternion.LookRotation(hit.normal)); // 피격 이펙트 생성
         }
     }
 

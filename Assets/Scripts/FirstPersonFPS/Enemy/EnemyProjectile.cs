@@ -18,6 +18,11 @@ public class EnemyProjectile : MonoBehaviour
     float projectileDistance = 30.0f;
 
     /// <summary>
+    /// 총알의 데미지
+    /// </summary>
+    int damage = 5;
+
+    /// <summary>
     /// 이동을 실행할 함수
     /// </summary>
     /// <param name="position">지나가는 방향</param>
@@ -59,7 +64,9 @@ public class EnemyProjectile : MonoBehaviour
     {
         if(other.CompareTag("Player"))  // 닿은 대상의 태그가 Player 이면
         {
-            Debug.Log("플레이어 맞음");
+            //Debug.Log("플레이어 맞음");
+            // PlayerController 스크립트에 있는 TakeDamage함수를 호출하고 매개변수에 damage를 넣어준다
+            other.GetComponent<PlayerController>().TakeDamage(damage);
 
             Destroy(gameObject); // 오브젝트 파괴
         }
