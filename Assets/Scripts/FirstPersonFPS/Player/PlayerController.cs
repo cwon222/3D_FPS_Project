@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     Weapon weapon;
 
+
     private void Awake()
     {
         // 마우스 커서를 보이지 않게 설정
@@ -98,7 +99,7 @@ public class PlayerController : MonoBehaviour
             {
                 isRun = Input.GetKey(keyCodeRun); // 쉬프트 키를 눌른거에 따라 true 또는 false
             }
-            // isRun == true 이면 RunSpeed(뛰는 속도) // isRun == false 이면 WalkSpeed (걷는 속도)
+            // isRunning == true 이면 RunSpeed(뛰는 속도) // isRunning == false 이면 WalkSpeed (걷는 속도)
             movement.MoveSpeed = isRun == true ? status.RunSpeed : status.WalkSpeed;
             // 달리는 중이면 애니메이터 MoveSpeed 해쉬값 1(뛰는 애니메이션)
             // 걷는 중이면 애니메이터 MoveSpeed 해쉬값 0.5(걷는 애니메이션)
@@ -156,7 +157,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 플레이어 데미지 받을 때 실행할 함수
     /// </summary>
-    /// <param name="damage">받은 데미지</param>
+    /// <param name="damage">받은 데미지 </param>
     public void TakeDamage(int damage)
     {
         bool isDie = status.DecreaseHP(damage);

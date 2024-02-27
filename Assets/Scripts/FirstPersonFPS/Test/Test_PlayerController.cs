@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// 플레이어를 관리하는 스크립트
@@ -8,20 +10,6 @@ using UnityEngine;
 public class Test_PlayerController : MonoBehaviour
 {
     PlayerInputActionFPS inputAction;
-    /// <summary>
-    /// 달리기 키 설정
-    /// </summary>
-    KeyCode keyCodeRun = KeyCode.LeftShift;
-
-    /// <summary>
-    /// 점프 키 설정
-    /// </summary>
-    KeyCode keyCodeJump = KeyCode.Space;
-
-    /// <summary>
-    /// 재장전 키 설정
-    /// </summary>
-    KeyCode keyCodeReload = KeyCode.R;
 
     /// <summary>
     /// 마우스 이동으로 카메라 회전
@@ -48,6 +36,11 @@ public class Test_PlayerController : MonoBehaviour
     /// </summary>
     Weapon weapon;
 
+    Vector2 movePos;
+    float run;
+    bool isAttack;
+    bool isAim;
+    bool isReload;
 
     private void Awake()
     {
@@ -67,24 +60,88 @@ public class Test_PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        //inputAction.Player.Enable();
-        //inputAction.Player.Move.performed += OnWalkStart;
-        //inputAction.Player.Move.canceled += OnWalkEnd;
-        //inputAction.Player.Move.performed += OnRunStart;
-        //inputAction.Player.Move.canceled += OnRunEnd;
-        //inputAction.Player.Move.performed += OnJumpStart;
-        //inputAction.Player.Move.canceled += OnJumpEnd;
-        //inputAction.Player.Move.performed += OnFireStart;
-        //inputAction.Player.Move.canceled += OnFireEnd;
-        //inputAction.Player.Move.performed += OnAimStart;
-        //inputAction.Player.Move.canceled += OnAimEnd;
+        inputAction.Player.Enable();
+        inputAction.Player.Move.performed += OnWalkStart;
+        inputAction.Player.Move.canceled += OnWalkStart;
+        inputAction.Player.Run.performed += OnRunStart;
+        inputAction.Player.Run.canceled += OnRunStart;
+        inputAction.Player.Jump.performed += Onjump;
+        inputAction.Player.Jump.canceled += Onjump;
+        inputAction.Player.Fire.performed += OnFireStart;
+        inputAction.Player.Fire.canceled += OnFireEnd;
+        inputAction.Player.Aim.performed += OnAimStart;
+        inputAction.Player.Aim.canceled += OnAimEnd;
+        inputAction.Player.Reload.performed += OnReloadStart;
+        inputAction.Player.Reload.canceled += OnReloadEnd;
+    }
+
+    
+    private void OnDisable()
+    {
+        inputAction.Player.Reload.canceled -= OnReloadEnd;
+        inputAction.Player.Reload.performed -= OnReloadStart;
+        inputAction.Player.Aim.canceled -= OnAimEnd;
+        inputAction.Player.Aim.performed -= OnAimStart;
+        inputAction.Player.Fire.canceled -= OnFireEnd;
+        inputAction.Player.Fire.performed -= OnFireStart;
+        inputAction.Player.Jump.canceled -= Onjump;
+        inputAction.Player.Jump.performed -= Onjump;
+        inputAction.Player.Run.canceled -= OnRunStart;
+        inputAction.Player.Run.performed -= OnRunStart;
+        inputAction.Player.Move.canceled -= OnWalkStart;
+        inputAction.Player.Move.performed -= OnWalkStart;
+        inputAction.Player.Disable();
+    }
+    private void OnReloadEnd(InputAction.CallbackContext context)
+    {
+        isReload = false;
+    }
+
+    private void OnReloadStart(InputAction.CallbackContext context)
+    {
+        isReload = true;
+    }
+
+
+    private void OnAimEnd(InputAction.CallbackContext context)
+    {
+        isAim = false;
+    }
+
+    private void OnAimStart(InputAction.CallbackContext context)
+    {
+        isAim = true;
+    }
+
+    private void OnFireEnd(InputAction.CallbackContext context)
+    {
+        isAttack = false;
+    }
+
+    private void OnFireStart(InputAction.CallbackContext context)
+    {
+        isAttack = true;
+    }
+
+    private void Onjump(InputAction.CallbackContext context)
+    {
+        movement.jump(); // 점프 실행
+    }
+
+    private void OnRunStart(InputAction.CallbackContext context)
+    {
+        run = context.ReadValue<float>();
+    }
+
+    private void OnWalkStart(InputAction.CallbackContext context)
+    {
+       movePos  = context.ReadValue<Vector2>();
     }
 
     private void Update()
     {
         UpdateRotate();         // 마우스 이동
         UpdateMove();           // 플레이어 이동 실행
-        UpdateJump();           // 점프 실행
         UpdateWeaponAction(); ; // 공격 실행
     }
 
@@ -94,6 +151,7 @@ public class Test_PlayerController : MonoBehaviour
     /// </summary>
     void UpdateRotate()
     {
+        // https://youtu.be/ivPAG6ruf00?si=YsuWsvFe8Ruh-aS_&t=1102
         float mouseX = Input.GetAxis("Mouse X"); // 마우스 X의 이동 값
         float mouseY = Input.GetAxis("Mouse Y"); // 마우스 Y의 이동 값
         
@@ -106,8 +164,8 @@ public class Test_PlayerController : MonoBehaviour
     /// </summary>
     void UpdateMove()
     {
-        float x = Input.GetAxis("Horizontal");  // 앞뒤 값 받기
-        float z = Input.GetAxis("Vertical");    // 양옆 값 받기
+        float x = movePos.x;
+        float z = movePos.y;
 
         if (x != 0 || z != 0) // 이동 중일 때(걷기 아니면 뛰기)
         {
@@ -116,7 +174,7 @@ public class Test_PlayerController : MonoBehaviour
             // 옆이나 뒤로 이동할 떄는 달릴 수 없음
             if (z > 0) // 앞으로 이동 중일 때
             {
-                isRun = Input.GetKey(keyCodeRun); // 쉬프트 키를 눌른거에 따라 true 또는 false
+                isRun = run == 1 ? true : false;
             }
             // isRun == true 이면 RunSpeed(뛰는 속도) // isRun == false 이면 WalkSpeed (걷는 속도)
             movement.MoveSpeed = isRun == true ? status.RunSpeed : status.WalkSpeed;
@@ -134,40 +192,29 @@ public class Test_PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 플레이어가 실제 점프 시키는 함수
-    /// </summary>
-    void UpdateJump()
-    {
-        if (Input.GetKey(keyCodeJump)) // 스페이스 바 누르면
-        {
-            movement.jump(); // 점프 실행
-        }
-    }
-
-    /// <summary>
-    /// 플레이어가 실제 공격을 실행 시키는 함수
+    /// 플레이어의 행동을 제어하는 함수
     /// </summary>
     void UpdateWeaponAction()
     {
-        if (Input.GetMouseButtonDown(0)) // 마우스 버튼을 누르면
+        if (isAttack == true) // 마우스 버튼을 누르면
         {
             weapon.StartWeaponAction(); // 공격 시작 함수 실행
         }
-        else if (Input.GetMouseButtonUp(0)) // 마우스 버튼을 떼면
+        else if (isAttack == false) // 마우스 버튼을 떼면
         {
             weapon.StopWeaponAction();  // 공격 중지 함수 실행
         }
 
-        if (Input.GetMouseButtonDown(1)) // 마우스 오른쪽 버튼 누르면 
+        if (isAim == true) // 마우스 오른쪽 버튼 누르면 
         {
             weapon.StartWeaponAction(1);    // 에임 모드 시작
         }
-        else if (Input.GetMouseButtonUp(1)) // 마우스 오른쪽 버튼 뗴면
+        else if (isAim == false) // 마우스 오른쪽 버튼 뗴면
         {
             weapon.StopWeaponAction(1);     // 에임 모드 중지
         }
 
-        if (Input.GetKeyDown(keyCodeReload)) // R키 누르면
+        if (isReload == true) // R키 누르면
         {
             weapon.StartReload();       // 재장전 함수 실행
         }

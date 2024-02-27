@@ -6,15 +6,6 @@
             "id": "0b9e2aa5-d86f-468d-a2b4-f97054c6db9a",
             "actions": [
                 {
-                    "name": "Mouse",
-                    "type": "Value",
-                    "id": "393215af-01d7-416f-92a3-36ee6ea4d302",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Move",
                     "type": "Value",
                     "id": "7a65fe52-f7a9-47d6-a3e7-3113800ed5c2",
@@ -58,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "27c7adb3-f315-4df4-a081-9c0d3816a80e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -85,34 +85,12 @@
                 },
                 {
                     "name": "",
-                    "id": "a16559ea-9040-420d-8502-6dbef9351826",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KM",
-                    "action": "Fire",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "e4e5a86e-99d9-4090-8582-f0d4167ba9ce",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Aim",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "2a859ec2-8224-4bdf-aa0d-6552b50cf820",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KM",
-                    "action": "Mouse",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -225,6 +203,76 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "56b7dbe3-f2de-4fc8-a28a-443ae74163b7",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KM",
+                    "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a16559ea-9040-420d-8502-6dbef9351826",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KM",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CameraLook",
+            "id": "dfddf240-472b-46e7-987b-4e7c563100d9",
+            "actions": [
+                {
+                    "name": "Mouse X",
+                    "type": "Value",
+                    "id": "d0214c50-b344-4bfc-a961-2909ebdba94d",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Mouse Y",
+                    "type": "Value",
+                    "id": "4565a420-845e-4597-ab82-4654634514dc",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "278a056e-fbb5-472b-9786-fbd11dcfac6a",
+                    "path": "<Mouse>/delta/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KM",
+                    "action": "Mouse X",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "04296434-0f74-40dc-8eb3-0be051f1460e",
+                    "path": "<Mouse>/delta/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KM",
+                    "action": "Mouse Y",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
