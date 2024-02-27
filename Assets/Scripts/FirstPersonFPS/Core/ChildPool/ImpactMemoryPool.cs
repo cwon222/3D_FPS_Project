@@ -7,7 +7,8 @@ public enum ImpactType
 {
     Normal = 0, // 벽, 바닥
     Obstacle,   // 장애물
-    Enemy       // 적
+    Enemy,       // 적
+    InteractionObject // 상호작용 가능한 물체
 }
 
 /// <summary>
@@ -51,6 +52,12 @@ public class ImpactMemoryPool : MonoBehaviour
         {
             OnSpawnImpact(ImpactType.Enemy, hit.point, Quaternion.LookRotation(hit.normal)); // 피격 이펙트 생성
         }
+        else if(hit.transform.CompareTag("InteractionObject"))
+        {
+            // 오브젝트 색상에 따라 색상만 바뀌도록 설정
+            Color color = hit.transform.GetComponentInChildren<MeshRenderer>().material.color;
+            OnSpawnImpact(ImpactType.InteractionObject, hit.point, Quaternion.LookRotation(hit.normal), color);
+        }
     }
 
     /// <summary>
@@ -59,11 +66,19 @@ public class ImpactMemoryPool : MonoBehaviour
     /// <param name="type">피격 이펙트 타입</param>
     /// <param name="position">생성 위치</param>
     /// <param name="rotation">회전</param>
-    private void OnSpawnImpact(ImpactType type, Vector3 position, Quaternion rotation)
+    private void OnSpawnImpact(ImpactType type, Vector3 position, Quaternion rotation, Color color = new Color())
     {
         GameObject item = memoryPool[(int)type].ActivePoolItem();   // 오브젝트 활성화
         item.transform.position = position;                         // 위치 설정
         item.transform.rotation = rotation;                         // 회전 설ㅇ정
         item.GetComponent<Impact>().Setup(memoryPool[(int)type]);   // 메모리 풀 찾기
+
+        if(type == ImpactType.InteractionObject) 
+        {
+            // 파티클 시스템의 메인 프로퍼티로 접근을 위해 변수 생성 후 접근(바로 접근 불가능)
+            ParticleSystem.MainModule main = item.GetComponent<ParticleSystem>().main;
+            // 시작 색상 변경
+            main.startColor = color;
+        }
     }
 }

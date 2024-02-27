@@ -20,6 +20,7 @@ TagManager:
   - ImpactNormal
   - ImpactObstacle
   - ImpactEnemy
+  - InteractionObject
   layers:
   - Default
   - TransparentFX
