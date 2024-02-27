@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ParticleAutoDestroy : MonoBehaviour
 {
+    // 임펙트 메모리 풀에 추가 해도됨
     ParticleSystem particle;
 
     private void Awake()

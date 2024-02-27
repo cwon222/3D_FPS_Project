@@ -368,6 +368,10 @@ public class Weapon : MonoBehaviour
                 // 닿은 대상의 위치에있는 EnemyStatus 컴포넌트에 TakeDamage에 파라메터를 weaponSetting.damage 주고 호출
                 hit.transform.GetComponent<EnemyStatus>().TakeDamage(weaponSetting.damage);
             }
+            else if(hit.transform.CompareTag("InteractionObject"))
+            {
+                hit.transform.GetComponent<InteractionObject>().TakeDamage(weaponSetting.damage);
+            }
         }
         // 총구 앞 Raycast 선 그리기(확인용)
         Debug.DrawRay(bulletSpawnPoint.position, attackDirection * weaponSetting.attackDistance, Color.blue);

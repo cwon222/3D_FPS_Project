@@ -8,7 +8,8 @@ public enum ImpactType
     Normal = 0, // 벽, 바닥
     Obstacle,   // 장애물
     Enemy,       // 적
-    InteractionObject // 상호작용 가능한 물체
+    InteractionObject, // 상호작용 가능한 물체
+    Explosion
 }
 
 /// <summary>
