@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.InputSystem;
 
 /// <summary>
@@ -65,6 +66,8 @@ public class Test_PlayerController : MonoBehaviour
     float mouseX;
     float mouseY;
     bool isAlive = true;
+
+    public Action onGameOver;
 
     private void Awake()
     {
@@ -266,6 +269,8 @@ public class Test_PlayerController : MonoBehaviour
 
         if (isDie)
         {
+            GameOverPanel gameOver = FindAnyObjectByType<GameOverPanel>();
+            gameOver.GameOverUI();
             isAlive = false; // 죽은거 표시
             inputAction.Disable(); // 인풋 시스템 뺴기
             Debug.Log("플레이어 죽음");
