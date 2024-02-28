@@ -43,12 +43,12 @@ public class PlayerAnimatorController : MonoBehaviour
     /// <summary>
     /// 애니메이터를 컨트롤할 변수
     /// </summary>
-    /// <param name="stateNmae"></param>
+    /// <param name="stateName"></param>
     /// <param name="layer"></param>
     /// <param name="normalizedTime"></param>
-    public void Play(string stateNmae, int layer, float normalizedTime)
+    public void Play(string stateName, int layer, float normalizedTime)
     {
-        animator.Play(stateNmae, layer, normalizedTime);
+        animator.Play(stateName, layer, normalizedTime);
     }
 
     /// <summary>

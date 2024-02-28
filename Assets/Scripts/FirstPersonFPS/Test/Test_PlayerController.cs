@@ -219,4 +219,18 @@ public class Test_PlayerController : MonoBehaviour
             weapon.StartReload();       // 재장전 함수 실행
         }
     }
+
+    /// <summary>
+    /// 플레이어 데미지 받을 때 실행할 함수
+    /// </summary>
+    /// <param name="damage">받은 데미지 </param>
+    public void TakeDamage(int damage)
+    {
+        bool isDie = status.DecreaseHP(damage);
+
+        if (isDie)
+        {
+            Debug.Log("플레이어 죽음");
+        }
+    }
 }

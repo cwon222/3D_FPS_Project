@@ -368,6 +368,7 @@ public class EnemyStatus : MonoBehaviour
         if(isDie == true) // 적이 죽으면
         {
             enemyMeoryPool.DeactivateEnemy(gameObject); // 오브젝트 비활성화
+
         }
     }
 
