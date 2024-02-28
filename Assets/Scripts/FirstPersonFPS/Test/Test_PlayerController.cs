@@ -231,6 +231,7 @@ public class Test_PlayerController : MonoBehaviour
         if (isDie)
         {
             Debug.Log("플레이어 죽음");
+            // 플레이어 죽으면 실행
         }
     }
 }
