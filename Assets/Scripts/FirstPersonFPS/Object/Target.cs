@@ -33,6 +33,8 @@ public class Target : InteractionObject
         yield return new WaitForSeconds(targetUpDelayTime);
 
         yield return StartCoroutine(OnAimation(90, 0));
+
+        isPossibleHit = true;
     }
 
     IEnumerator OnAimation(float start, float end)

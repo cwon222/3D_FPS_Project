@@ -213,12 +213,17 @@ public class Weapon : MonoBehaviour
     public void StartReload()
     {
         // 현재 재장전 중이거나 탄창 수가 0이면 재장전 불가능
-        if(isReload == true || weaponSetting.currentMagazine <= 0) return;
+        if (isReload == true || weaponSetting.currentMagazine <= 0 || weaponSetting.currentAmmo == 30)
+        {
+            return;
+        }
+        else
+        {
+            // 무기 액션 동주에 R 키를 눌러 재장전을 시도하면 무기 액션 종료 후 재장전
+            StopWeaponAction();
 
-        // 무기 액션 동주에 R 키를 눌러 재장전을 시도하면 무기 액션 종료 후 재장전
-        StopWeaponAction();
-
-        StartCoroutine("OnReload"); // 재장전 코루틴 실행
+            StartCoroutine("OnReload"); // 재장전 코루틴 실행
+        }
     }
 
     /// <summary>

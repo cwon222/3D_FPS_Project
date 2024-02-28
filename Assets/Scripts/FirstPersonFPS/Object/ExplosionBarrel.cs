@@ -16,6 +16,9 @@ public class ExplosionBarrel : InteractionObject
     [SerializeField]
     float explosionForce = 1000.0f;
 
+    [SerializeField]
+    int explosionDamage = 50;
+
     bool isExplode = false;
 
     public override void TakeDamage(int damage)
@@ -50,7 +53,7 @@ public class ExplosionBarrel : InteractionObject
             Test_PlayerController player = hit.GetComponent<Test_PlayerController>();
             if(player != null)
             {
-                player.TakeDamage(50);
+                player.TakeDamage(explosionDamage);
                 continue;
             }
 

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerHUD : MonoBehaviour
 {
+
     [Header("Components")]
     /// <summary>
     /// 현재 정보가 출력되는 무기
@@ -18,6 +19,7 @@ public class PlayerHUD : MonoBehaviour
     /// </summary>
     [SerializeField]
     Status status;
+
 
     [Header("Weapon Base")]
     /// <summary>
@@ -80,6 +82,9 @@ public class PlayerHUD : MonoBehaviour
     /// </summary>
     [SerializeField]
     AnimationCurve curveBloodScreen;
+
+
+    
 
     private void Awake()
     {

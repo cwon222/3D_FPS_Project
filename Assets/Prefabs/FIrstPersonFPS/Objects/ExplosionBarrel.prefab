@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4e36074f8233fe4bbec2623b2e1355b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 100
+  maxHP: 80
   explosionPrefab: {fileID: 6467712642994550110, guid: 1b211cb419660ca4aaccb3fcd6ce2eaa,
     type: 3}
   explosionDelayTime: 0.3

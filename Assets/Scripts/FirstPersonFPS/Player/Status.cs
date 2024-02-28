@@ -17,9 +17,9 @@ public class Status : MonoBehaviour
     /// HP이벤트 클래스 인스턴스 선언
     /// </summary>
     [HideInInspector]
+    public HPEvent onHPEvent = new HPEvent();
 
     [Header("Move Speed")]
-    public HPEvent onHPEvent = new HPEvent();
     /// <summary>
     /// 걷는 속도
     /// </summary>

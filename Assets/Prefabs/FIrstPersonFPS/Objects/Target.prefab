@@ -67,7 +67,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b0e786715a18a043bbaa4414e93ac65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 50
+  maxHP: 30
   targetUpDelayTime: 3
 --- !u!1001 &638124879999930147
 PrefabInstance:

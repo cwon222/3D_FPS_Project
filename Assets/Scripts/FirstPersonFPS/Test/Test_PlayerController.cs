@@ -61,13 +61,22 @@ public class Test_PlayerController : MonoBehaviour
     /// 현재 장전을 시작했는지 확인용
     /// </summary>
     bool isReload;
-
-    Rigidbody rigid;
+    
+    /// <summary>
+    /// 마우스 X축
+    /// </summary>
     float mouseX;
+    
+    /// <summary>
+    /// 마우스 Y축
+    /// </summary>
     float mouseY;
+
+    /// <summary>
+    /// 살아있는지 확인용
+    /// </summary>
     bool isAlive = true;
 
-    public Action onGameOver;
 
     private void Awake()
     {
@@ -81,7 +90,6 @@ public class Test_PlayerController : MonoBehaviour
         status = GetComponent<Status>();                        // Status 컴포넌트 찾기
         animator = GetComponent<PlayerAnimatorController>();    // PlayerAnimatorController 컴포넌트 찾기
         weapon = GetComponentInChildren<Weapon>();              // 자식 오브젝트 안에 있는 Weapon 컴포넌트 찾기
-        rigid = GetComponent<Rigidbody>();
 
         inputAction = new PlayerInputActionFPS();
     }

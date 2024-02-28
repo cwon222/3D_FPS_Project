@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+
 /// <summary>
 /// 현재 적의 상태를 나타내는 enum
 /// </summary>
@@ -20,6 +21,7 @@ public enum EnemyState
 /// </summary>
 public class EnemyStatus : MonoBehaviour
 {
+
     [Header("Pursuit")]
     /// <summary>
     /// 인식 범위 (범위 안으로 들어오면 추적 상태로 변경)
@@ -57,6 +59,7 @@ public class EnemyStatus : MonoBehaviour
     /// </summary>
     [SerializeField]
     float attackRate = 2.0f;
+
 
     /// <summary>
     ///  현재 적의 행동
@@ -98,6 +101,7 @@ public class EnemyStatus : MonoBehaviour
 
         // NavMeshAgent 컴포넌트에서 회전을 업데이트 못하게 설정
         navMeshAgent.updateRotation = false;
+        
     }
 
     private void OnEnable()
