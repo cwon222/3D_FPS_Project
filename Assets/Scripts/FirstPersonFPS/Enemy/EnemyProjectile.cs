@@ -66,7 +66,8 @@ public class EnemyProjectile : MonoBehaviour
         {
             //Debug.Log("플레이어 맞음");
             // PlayerController 스크립트에 있는 TakeDamage함수를 호출하고 매개변수에 damage를 넣어준다
-            other.GetComponent<PlayerController>().TakeDamage(damage);
+            other.GetComponent<Test_PlayerController>().TakeDamage(damage);
+            //other.GetComponent<PlayerController>().TakeDamage(damage);
 
             Destroy(gameObject); // 오브젝트 파괴
         }

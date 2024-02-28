@@ -36,11 +36,35 @@ public class Test_PlayerController : MonoBehaviour
     /// </summary>
     Weapon weapon;
 
+    /// <summary>
+    /// 움직이는 값 벡터로 변경을 ㅜ이한ㅇ 변수
+    /// </summary>
     Vector2 movePos;
+
+    /// <summary>
+    /// 현재 달리기를 시작했는지 확인용
+    /// </summary>
     float run;
+
+    /// <summary>
+    /// 현재 공격을 시작했는지 확인용
+    /// </summary>
     bool isAttack;
+
+    /// <summary>
+    /// 현재 에이밍을 하는 중인지 확인용
+    /// </summary>
     bool isAim;
+
+    /// <summary>
+    /// 현재 장전을 시작했는지 확인용
+    /// </summary>
     bool isReload;
+
+    Rigidbody rigid;
+    float mouseX;
+    float mouseY;
+    bool isAlive = true;
 
     private void Awake()
     {
@@ -54,8 +78,9 @@ public class Test_PlayerController : MonoBehaviour
         status = GetComponent<Status>();                        // Status 컴포넌트 찾기
         animator = GetComponent<PlayerAnimatorController>();    // PlayerAnimatorController 컴포넌트 찾기
         weapon = GetComponentInChildren<Weapon>();              // 자식 오브젝트 안에 있는 Weapon 컴포넌트 찾기
+        rigid = GetComponent<Rigidbody>();
 
-        inputAction = new();
+        inputAction = new PlayerInputActionFPS();
     }
 
     private void OnEnable()
@@ -151,12 +176,23 @@ public class Test_PlayerController : MonoBehaviour
     /// </summary>
     void UpdateRotate()
     {
-        // https://youtu.be/ivPAG6ruf00?si=YsuWsvFe8Ruh-aS_&t=1102
-        float mouseX = Input.GetAxis("Mouse X"); // 마우스 X의 이동 값
-        float mouseY = Input.GetAxis("Mouse Y"); // 마우스 Y의 이동 값
-        
+        if(isAlive)
+        {
+            mouseX = Input.GetAxis("Mouse X"); // 마우스 X의 이동 값
+            mouseY = Input.GetAxis("Mouse Y"); // 마우스 Y의 이동 값
 
-        rotateToMouse.UpdateRotate(mouseX, mouseY); // 이동한 마우스의 X,Y의 값을 매개변수로 넣기
+
+            rotateToMouse.UpdateRotate(mouseX, mouseY); // 이동한 마우스의 X,Y의 값을 매개변수로 넣기
+        }
+        else
+        {
+            rotateToMouse.UpdateRotate(0, 0); // 이동한 마우스의 X,Y의 값을 매개변수로 넣기
+            // 마우스 커서를 보이게 설정
+            Cursor.visible = true;
+            // 마우스 고정 풀기
+            Cursor.lockState = CursorLockMode.None;
+        }
+            
     }
 
     /// <summary>
@@ -230,8 +266,9 @@ public class Test_PlayerController : MonoBehaviour
 
         if (isDie)
         {
+            isAlive = false; // 죽은거 표시
+            inputAction.Disable(); // 인풋 시스템 뺴기
             Debug.Log("플레이어 죽음");
-            // 플레이어 죽으면 실행
         }
     }
 }
